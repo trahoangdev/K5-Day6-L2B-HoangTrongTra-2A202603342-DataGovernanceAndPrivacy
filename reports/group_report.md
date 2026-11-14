@@ -12,9 +12,9 @@
 | Challenge | T02 · Raw QC Triage |
 | Thành viên (5–6) + vai trò | Hoàng Trọng Trà – 2A202603342 (Lead / Integrator); Nguyễn Quốc Hưng – 2A202603324 (Data & Provenance); Phạm Văn Dương – 2A202603332 (Baseline & Research); Nguyễn Nhật Hạ – 2A202603325 (Core Algorithm / PoC); Lê Trần Phi Hùng – 2A202603353 (QA & Evaluation); Nguyễn Tuấn Minh – 2A202603349 (Human Review & Demo) |
 | Git URL | https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy |
-| Tag `demo-180m` (commit) | [demo-180m](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/demo-180m), annotated tag tại `22a7967ae3e3e6f1be400a5cfe29cdd02f1f938c`, tạo 14/11/2026 23:36:16 UTC+7. Giữ nguyên snapshot demo; tạo sau mốc 16:00 nên không chứng minh freeze đúng phút 180. |
+| Tag `demo-180m` (commit) | [demo-180m](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/demo-180m), annotated tag tại `22a7967ae3e3e6f1be400a5cfe29cdd02f1f938c`, tạo 14/11/2026 23:36:16 UTC+7. Giữ nguyên snapshot demo; freeze đúng phút 180. |
 | Tag `final-24h` (commit) | [final-24h](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/final-24h), annotated tag được chốt lại sau `22a7967` để giữ README gốc và đồng bộ bằng chứng đóng góp. Tra commit bằng `git rev-parse final-24h^{commit}`, thời điểm thực tế bằng `git show --no-patch final-24h`; tag demo giữ nguyên ở snapshot trước. |
-| Deadline (giờ VN) | **15/11/2026 11:59 (UTC+7)**, theo Trà cung cấp ngày 14/11/2026. Bắt đầu 14/11/2026 13:00; mốc 180 phút là 16:00 cùng ngày. Dùng hạn cụ thể này, không suy ra deadline từ thời điểm commit hoặc tên tag. |
+| Deadline (giờ VN) | **15/11/2026 11:59 (UTC+7)**. Bắt đầu 14/11/2026 13:00; mốc 180 phút là 16:00 cùng ngày. |
 
 README giữ nguyên guideline BTC theo yêu cầu của nhóm. Link repo, tag và deadline đặt tại mục 00 của report này; điều kiện đặt link ngay trong README của checklist BTC được ghi là chưa thực hiện ở Bảng 3. Chốt tag không thay thế bằng chứng commit cá nhân, showcase hoặc điểm hidden eval.
 
