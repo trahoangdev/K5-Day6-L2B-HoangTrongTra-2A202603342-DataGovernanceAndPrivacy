@@ -17,9 +17,9 @@ Không có nhãn eval chính thức trong student repo; không suy diễn điể
 | Budget / seed | B=20 / 42; giống nhau cho Baseline và PoC |
 | Queue demo | top-20 trên all 96; không đồng nhất với top-20 sau lọc split của evaluator |
 | Baseline | score=-Laplacian variance toàn ảnh; ngưỡng hành động 186.855 kế thừa implementation của Dương trên dev; không có log tìm ngưỡng để chứng minh tối ưu; không chỉnh lại |
-| PoC | toàn bộ tham số được ghi tường minh trong configs/submission.yaml; giữ nguyên DEFAULTS của Hạ; chuẩn camera/global chỉ fit dev; tham chiếu session theo batch không dùng nhãn |
+| PoC | toàn bộ tham số được ghi tường minh trong configs/lab.yaml; giữ nguyên DEFAULTS của Hạ; chuẩn camera/global chỉ fit dev; tham chiếu session theo batch không dùng nhãn |
 | Action thresholds | keep_max=0.20, review_max=0.60; score không buộc trong [0,1] |
-| Policy | t02-lead-v1, docs/T02_POLICY.md; review chỉ sửa hành động, không sửa score |
+| Policy | t02-lead-v1, reports/group_report.md; review chỉ sửa hành động, không sửa score |
 | Internal evaluation | 56 nhãn dev cuối, AI-assisted, SHA-256 cố định; chạy evaluator BTC với --split dev --budget 20; chỉ số in-sample, không phải heldout |
 | Official evaluation | giữ --split eval, GT của giảng viên; chưa chạy được vì chưa có GT; không tạo nhãn giả cho 40 eval |
 | Slices | light, camera_id, defect_type; tính số hit theo cùng top-20 dev toàn cục, không cấp B=20 riêng cho từng slice |
@@ -35,5 +35,5 @@ Không sửa metric/evaluator BTC. Thay đổi tham số/nhãn sau freeze cần 
 .venv/Scripts/python.exe -m tools.prepare_submission
 ```
 
-Script xác minh freeze, manifest, chạy Baseline/PoC offline, join nhãn dev, gọi evaluator và sinh bảng, slices, CI và bằng chứng pipeline.
+Script xác minh freeze, manifest, chạy Baseline/PoC offline, join nhãn dev, gọi evaluator và sinh bảng, slices, CI và bằng chứng pipeline trong out/.
 Bằng chứng human review phải do reviewer thật cung cấp; script không tự duyệt.

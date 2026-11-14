@@ -18,20 +18,114 @@
     "publish": "metadata/scores/hashes only; real pixels stay gitignored data/real"
   },
   "sha256": {
-    "configs/submission.yaml": "baa06b4e365e5f5082b3cd4000395b16cb40911268d080efc504dd70c03e9923",
     "configs/tracks/t02.yaml": "2379b49ceaa1ea42048cd0c9238cf960c960707dd55d1fe7b69e5340834c9f56",
     "reports/internal_labels_t02_final.csv": "ef8d2747515cb047f9a0e405431c6607c1bab690b8204555f6936781c628a0c0",
     "fixtures/t02_raw_qc/manifest.csv": "7faea054fdc348e363d98b406e1f762b01cc158d5b1bc0584e163069dacd4c79",
-    "src/team06/__init__.py": "759fba26db4ba7d2d077bce54c24c0e4ffcaa954051adb7bc168730aa3cbe35c",
+    "src/team06/__init__.py": "0e16a7f60d101e06d4fd904cfb699ee5b3850c23739a6a0067c0c6e681307ee6",
     "src/team06/baseline.py": "04bd967c92757b95b3ffe3110b63fc1aa4aad6fa62768d30889c1002d262ab57",
-    "src/team06/data.py": "c2eb2d340eea8df7a3130a6b36165fb188e7776a213a2de396719fa9c0919a59",
+    "src/team06/data.py": "ea392626e288150b32cc5130160e6f682467e81dd967fc8d3126f823edcd7233",
     "src/team06/features.py": "064993394a5450a72c72342f06d1ed4e1aeef2e75e9a542dbcd20d37221772c5",
     "src/team06/human_review.py": "5dc5479989ca6e9b1b2338566ff9a6d386fb20772895915a5976a72ab8fe7831",
     "src/team06/integration.py": "22cd726548e1afb6dbb62501f1889e8da9c86e52d0b8a5c0d3bd114cda600258",
-    "src/team06/policy.py": "d7fc84f39afffa7ae43e8c9054955b581b837b21f10539e07a05842303b59a16",
+    "src/team06/policy.py": "34324c912fe76c1b2e2a0bf1d6be20d49571e26f31192ba5d6c27229b26c55a1",
     "src/team06/scoring.py": "c87e4781b3feabbf420ad17b198e3162a4e29ee8cb8e29458b96c6553b7c07de",
-    "src/pipeline.py": "9831706690574d2c12c81566caa26c40f8f3252a7bd75d5565b76ca2cf799acb",
+    "src/pipeline.py": "4c6620f2a356563943614fae658b00831ff944f7f6f8e96e35e477e9a2981d40",
     "src/main.py": "39fa3883f2b9906412f8a57795192f2b53e91b17947653682a756d346714eff1",
-    "src/metrics/tracks.py": "23e95f95b560b25305b80cecd5c498d4d73cfcb46d4cddd4c10522bbb8d05c59"
+    "src/metrics/tracks.py": "23e95f95b560b25305b80cecd5c498d4d73cfcb46d4cddd4c10522bbb8d05c59",
+    "configs/lab.yaml": "baa06b4e365e5f5082b3cd4000395b16cb40911268d080efc504dd70c03e9923"
+  },
+  "confirmed_review": {
+    "context": {
+      "policy_version": "t02-lead-v1",
+      "config_hash": "586b70e32162",
+      "seed": 42,
+      "input_manifest_sha256": "7faea054fdc348e363d98b406e1f762b01cc158d5b1bc0584e163069dacd4c79",
+      "scored_sha256": "30f6534020716dd8a8998d32abe6442209306d5092689eb572b96e76dff58df2",
+      "queue_ids": [
+        "img_15_3",
+        "img_07_2",
+        "img_12_3",
+        "img_17_3",
+        "img_23_3",
+        "img_21_3",
+        "img_20_2",
+        "img_18_2",
+        "img_10_3",
+        "img_01_2",
+        "img_12_2",
+        "img_06_2",
+        "img_02_3",
+        "img_00_2",
+        "img_03_3",
+        "img_06_3",
+        "img_08_3",
+        "img_03_2",
+        "img_09_3",
+        "img_17_2"
+      ],
+      "fingerprint": "1efad62cc8d7"
+    },
+    "confirmation": {
+      "confirmed_by": "Hoàng Trọng Trà - 2A202603342",
+      "recorded_at_utc": "2026-11-14T14:29:59+00:00",
+      "channel": "User response in Codex chat",
+      "statement": "Tôi đã xem và chấp thuận RECAPTURE cả 20 ảnh",
+      "scope": "20 item_ids in the bound PoC top-B queue only",
+      "item_ids": [
+        "img_15_3",
+        "img_07_2",
+        "img_12_3",
+        "img_17_3",
+        "img_23_3",
+        "img_21_3",
+        "img_20_2",
+        "img_18_2",
+        "img_10_3",
+        "img_01_2",
+        "img_12_2",
+        "img_06_2",
+        "img_02_3",
+        "img_00_2",
+        "img_03_3",
+        "img_06_3",
+        "img_08_3",
+        "img_03_2",
+        "img_09_3",
+        "img_17_2"
+      ],
+      "assistance": "AI visual proposals disclosed; human confirmation received before recording reviewer decisions",
+      "not_covered": "5 uncertain images outside top-B; no claim of independent double annotation or model accuracy"
+    },
+    "review_csv_sha256": "310315a96e56403da5eed44ef88510da3acddd9fda282d3ab81637b60052c78e"
+  },
+  "maintenance": {
+    "at_utc": "2026-11-14T15:27:50+00:00",
+    "reason": "Submission cleanup only: promote identical frozen config to configs/lab.yaml, consolidate review binding, relocate unchanged audit, archive internal notes. No scoring/threshold/label changes.",
+    "documentation_only_changes": [
+      {
+        "path": "src/pipeline.py",
+        "before_sha256": "9831706690574d2c12c81566caa26c40f8f3252a7bd75d5565b76ca2cf799acb",
+        "after_sha256": "4c6620f2a356563943614fae658b00831ff944f7f6f8e96e35e477e9a2981d40",
+        "change": "documentation links only; executable AST unchanged"
+      },
+      {
+        "path": "src/team06/policy.py",
+        "before_sha256": "d7fc84f39afffa7ae43e8c9054955b581b837b21f10539e07a05842303b59a16",
+        "after_sha256": "34324c912fe76c1b2e2a0bf1d6be20d49571e26f31192ba5d6c27229b26c55a1",
+        "change": "documentation links only; executable AST unchanged"
+      },
+      {
+        "path": "src/team06/__init__.py",
+        "before_sha256": "759fba26db4ba7d2d077bce54c24c0e4ffcaa954051adb7bc168730aa3cbe35c",
+        "after_sha256": "0e16a7f60d101e06d4fd904cfb699ee5b3850c23739a6a0067c0c6e681307ee6",
+        "change": "documentation links only; executable AST unchanged"
+      },
+      {
+        "path": "src/team06/data.py",
+        "before_sha256": "c2eb2d340eea8df7a3130a6b36165fb188e7776a213a2de396719fa9c0919a59",
+        "after_sha256": "ea392626e288150b32cc5130160e6f682467e81dd967fc8d3126f823edcd7233",
+        "change": "documentation links only; executable AST unchanged"
+      }
+    ]
   }
 }

@@ -14,7 +14,6 @@ import json
 import math
 import os
 from pathlib import Path
-import re
 import shutil
 import subprocess
 import sys
@@ -24,14 +23,10 @@ import pandas as pd
 from src.common.report import compare_runs
 
 ROOT = Path(__file__).resolve().parents[1]
-CONFIG = "configs/submission.yaml"
-EVIDENCE = Path("reports/submission")
+CONFIG = "configs/lab.yaml"
 RUNS = Path("out/submission")
+EVIDENCE = RUNS
 SCOPE = "internal_dev_in_sample_not_official"
-# One archived PoC review is enough to reproduce the human evidence. Everything
-# else stays in RUNS; Baseline is represented by its generated metrics JSON.
-POC_EVIDENCE_FILES = ("raw_predictions.csv", "image_decisions.csv", "decision.json",
-                      "review_context.json", "audit_log.jsonl")
 
 
 def digest(path: str | Path) -> str:
@@ -62,23 +57,6 @@ def write_json(path: Path, data: dict) -> None:
     # The shared evaluator emits NaN for undefined slice cells; publish JSON null.
     path.write_text(json.dumps(clean(data), ensure_ascii=False, indent=2, allow_nan=False) + "\n",
                     encoding="utf-8", newline="\n")
-
-
-def read_test_counts(path: Path = EVIDENCE / "tests.txt") -> dict[str, int]:
-    """Read saved pytest results on a clean clone, without a local JUnit XML.
-
-    This reports the recorded verification, not a new execution of pytest.
-    Failed/error counts must remain visible to report/demo consumers.
-    """
-    lines = path.read_text(encoding="utf-8").splitlines()
-    for line in reversed(lines):
-        matches = re.findall(r"\b(\d+) (passed|skipped|failed|errors?|xfailed|xpassed)\b", line)
-        if matches:
-            counts = dict.fromkeys(("passed", "skipped", "failed", "errors", "xfailed", "xpassed"), 0)
-            for number, name in matches:
-                counts["errors" if name == "error" else name] = int(number)
-            return counts
-    raise ValueError(f"No pytest summary found in {path}; run pytest and save its output first")
 
 
 def append_decision_log(source: Path, destination: Path) -> None:
@@ -115,20 +93,31 @@ def append_decision_log(source: Path, destination: Path) -> None:
 
 
 def export_run_evidence(name: str, output: Path) -> None:
-    """Whitelist published evidence; never overwrite an archived human review.
-
-    Reruns/replays remain in out/submission. The committed snapshot records the
-    original confirmed review, rather than replacing it with a new replay log.
-    """
+    """Only publish the required decision log and original audit; all other output stays local."""
     if name != "poc":
         return
-    destination = EVIDENCE / "poc"
-    destination.mkdir(parents=True, exist_ok=True)
-    for filename in POC_EVIDENCE_FILES:
-        target = destination / filename
-        if not target.exists():
-            shutil.copyfile(output / filename, target)
+    audit = Path("reports/audit_log.jsonl")
+    if not audit.exists():
+        shutil.copyfile(output / "audit_log.jsonl", audit)
     append_decision_log(output / "decision_log.csv", Path("reports/decision_log.csv"))
+
+
+def confirmed_review(freeze: dict, output: Path) -> pd.DataFrame:
+    """Bind recorded human input to the frozen input, full scored pool and queue."""
+    proof = freeze["confirmed_review"]
+    context, confirmation = proof["context"], proof["confirmation"]
+    score_hash = hashlib.sha256((output / "raw_predictions.csv").read_text(encoding="utf-8").encode()).hexdigest()
+    queue = pd.read_csv(output / "review_queue.csv", keep_default_na=False)
+    human_path = Path("reports/review_queue.csv")
+    human = pd.read_csv(human_path, keep_default_na=False)
+    if (score_hash != context["scored_sha256"]
+            or digest("fixtures/t02_raw_qc/manifest.csv") != context["input_manifest_sha256"]
+            or list(queue.item_id) != context["queue_ids"]
+            or list(human.item_id) != confirmation["item_ids"]
+            or digest(human_path) != proof["review_csv_sha256"]
+            or not human.reviewer.eq(confirmation["confirmed_by"]).all()):
+        raise ValueError("Saved review does not match the frozen scores/input/queue or human confirmation")
+    return human
 
 
 def internal_gt() -> pd.DataFrame:
@@ -185,8 +174,6 @@ def main() -> None:
     args = parser.parse_args()
     os.chdir(ROOT)
     freeze = verify_freeze()
-    confirmed_raw = (pd.read_csv(EVIDENCE / "poc/raw_predictions.csv")
-                     if args.replay_confirmed_review else None)
     EVIDENCE.mkdir(parents=True, exist_ok=True)
     gt = internal_gt()
     gt_path = EVIDENCE / "internal_dev_labels_joined.csv"
@@ -198,13 +185,7 @@ def main() -> None:
         run("-m", "src.main", "--config", CONFIG, "--pipeline", pipeline,
             "--output", str(output), "--offline", "--seed", "42", "--run-name", name)
         if name == "poc" and args.replay_confirmed_review:
-            current = pd.read_csv(output / "raw_predictions.csv")
-            pd.testing.assert_frame_equal(current, confirmed_raw, check_exact=True)
-            confirmation = json.loads((EVIDENCE / "review_confirmation.json").read_text(encoding="utf-8"))
-            human = pd.read_csv("reports/review_queue.csv", keep_default_na=False)
-            if list(human.item_id) != confirmation["item_ids"] or not human.reviewer.eq(
-                    confirmation["confirmed_by"]).all():
-                raise ValueError("Human review differs from its recorded confirmation")
+            human = confirmed_review(freeze, output)
             reviewed_path = output / "review_queue_reviewed.csv"
             if reviewed_path.exists():
                 pd.testing.assert_frame_equal(pd.read_csv(reviewed_path, keep_default_na=False), human)
@@ -240,7 +221,7 @@ def main() -> None:
         "56 dev images, internal AI-assisted labels; design observed this dev set. B=20, seed=42.\n"
         "Review queue uses all 96 images; metrics first filter to 56 dev images.\n\n" + table + "\n",
         encoding="utf-8", newline="\n")
-    print("Evidence generated. Existing human decisions may be applied; no new review was auto-approved.")
+    print("Metrics and required logs exported; detailed outputs stay in out/. Replay is not a new human review.")
 
 
 if __name__ == "__main__":

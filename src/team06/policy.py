@@ -1,7 +1,7 @@
 """T02 decision rules — Hoàng Trọng Trà, 2A202603342.
 
 Consumes scorer actions, not score thresholds or GT. Mandatory top-B review;
-unresolved uncertainty stays REVIEW. HOLD > REWORK > GO. See docs/T02_POLICY.md.
+unresolved uncertainty stays REVIEW. HOLD > REWORK > GO. See reports/group_report.md.
 """
 from __future__ import annotations
 

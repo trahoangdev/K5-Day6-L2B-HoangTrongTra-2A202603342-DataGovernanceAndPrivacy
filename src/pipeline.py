@@ -14,7 +14,7 @@ docs/tracks/TXX.md (also in src/metrics/tracks.py::TRACKS). Then evaluate with
 Rules: never read fixtures/*/gt/ here (the GT guard will stop you); seed everything via ctx.rng;
 no network calls; fail loudly on missing models instead of downloading.
 T02 stages are orchestrated in team06.integration, with decisions in team06.policy.
-See docs/T02_POLICY.md for action/review semantics and the handoff to scorers.
+See reports/group_report.md for action/review semantics and the handoff to scorers.
 """
 from __future__ import annotations
 

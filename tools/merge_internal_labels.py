@@ -10,15 +10,15 @@ Two modes, chosen automatically from the `annotator` column:
     fallback when only one person is available; it detects unstable criteria
     but cannot detect a bias the single annotator holds consistently.
 
-Implements step 3 of `reports/internal_label_protocol.md`:
+Implements step 3 of `reports/group_report.md`:
   * Cohen's kappa on `is_defect` (the binary the primary metric depends on);
   * raw agreement on `defect_type`;
   * the list of images the two annotators disagree on, for joint adjudication;
   * a merged file where agreed rows are filled in and disagreements left blank.
 
 Usage:
-    python tools/merge_internal_labels.py --a reports/internal_labels_t02_A.csv \
-                                          --b reports/internal_labels_t02_B.csv
+    python tools/merge_internal_labels.py --a out/labels_A.csv \
+                                          --b out/labels_B.csv
 """
 from __future__ import annotations
 
@@ -87,10 +87,10 @@ def reconcile_labels(m: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--a", default="reports/internal_labels_t02_A.csv")
-    ap.add_argument("--b", default="reports/internal_labels_t02_B.csv")
-    ap.add_argument("--out", default="reports/internal_labels_t02_merged.csv")
-    ap.add_argument("--disagree", default="reports/internal_labels_t02_disagreements.csv")
+    ap.add_argument("--a", default="out/labels_A.csv")
+    ap.add_argument("--b", default="out/labels_B.csv")
+    ap.add_argument("--out", default="out/labels_merged.csv")
+    ap.add_argument("--disagree", default="out/label_disagreements.csv")
     ap.add_argument("--retest", action="store_true",
                     help="ép chế độ test-retest (mặc định tự nhận từ cột annotator)")
     args = ap.parse_args(argv)

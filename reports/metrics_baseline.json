@@ -1,12 +1,12 @@
 {
   "run_name": "baseline_internal_dev",
   "track": "t02",
-  "created_at": "2026-11-14T15:16:29+00:00",
-  "git_sha": "24807f8",
+  "created_at": "2026-11-14T15:31:04+00:00",
+  "git_sha": "24bf3ec",
   "seed": 42,
   "n_items": 96,
-  "runtime_seconds": 0.3905,
-  "runtime_per_100_items_s": 0.4068,
+  "runtime_seconds": 0.4021,
+  "runtime_per_100_items_s": 0.4189,
   "machine": {
     "python": "3.12.14",
     "platform": "Windows-11-10.0.26200-SP0",
@@ -97,7 +97,7 @@
     }
   ],
   "extra": {
-    "gt": "reports\\submission\\internal_dev_labels_joined.csv",
+    "gt": "out\\submission\\internal_dev_labels_joined.csv",
     "pred": "out\\submission\\baseline\\ranked_review.csv",
     "notes": [
       "B=20, eval N=56"
@@ -149,7 +149,7 @@
     "scope": "internal_dev_in_sample_not_official",
     "official": false,
     "label_sha256": "ef8d2747515cb047f9a0e405431c6607c1bab690b8204555f6936781c628a0c0",
-    "freeze_sha256": "db3585d0004520ebb0dd0f89a4e43dde61213a79263e770c2e62dfc45aad4ecd",
+    "freeze_sha256": "9a08f3f1e6bfa1c99ca017b579e5058452e07a595e1cb147d8d9ab363ab1c104",
     "warning": "Same dev set used during design; not heldout accuracy. Inherited evaluator note 'eval N' refers to --split dev here."
   }
 }

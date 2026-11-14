@@ -1,33 +1,35 @@
 # Day 06 · Data Lab · Field-to-Release PoC (AI20K · Data Track)
 
-**Team 6 (G06) · T02 Raw QC Triage** — Lead: **Hoàng Trọng Trà – 2A202603342**.
-Phân công 6 thành viên, giao diện module, nhánh Git và lệnh PowerShell: [docs/TEAM06.md](docs/TEAM06.md).
-Tích hợp và [policy T02 của Lead](docs/T02_POLICY.md) đã có review/audit và gate GO/HOLD/REWORK.
-Data, baseline Laplacian và PoC đa feature đã được tích hợp; lệnh chạy thật tạo prediction, queue và decision.
-Chưa review thì decision HOLD là bình thường; metric chính thức vẫn cần GT giảng viên.
-
-**Hồ sơ nộp Team 6:** [báo cáo](reports/group_report.md), [protocol đã freeze](reports/metric_contract.md),
-[bảng Baseline–PoC](reports/table1_baseline_vs_poc.md), [review của Trà](reports/review_queue.csv),
-[decision log](reports/decision_log.csv), [demo HTML 5 slide của Team 6](demo/index.html), [kịch bản demo](demo/README.md).
-Trà tiếp quản các phần còn lại; Git contribution cũ giữ nguyên và nêu minh bạch trong báo cáo.
-Kết quả hiện tại là **dev nội bộ**, không phải điểm eval chính thức. Sau 20 review thật, batch vẫn HOLD do 5 ảnh ngoài budget còn chờ.
+**Team 6 · G06 · T02 Raw QC Triage.** Lead: Hoàng Trọng Trà, 2A202603342.
+Thành viên, phương pháp, kết quả và giới hạn: [báo cáo nhóm](reports/group_report.md).
+Bản nộp: [metric contract](reports/metric_contract.md), [so sánh Baseline–PoC](reports/table1_baseline_vs_poc.md),
+[review đã xác nhận](reports/review_queue.csv), [decision log](reports/decision_log.csv), [audit](reports/audit_log.jsonl),
+[Git contributions](reports/team_contributions.csv), [slide HTML chung của nhóm](demo/index.html).
 
 ```powershell
-# Sinh lại Baseline/PoC, đánh giá dev, bảng/slices/CI và replay review đã được Trà xác nhận:
-.venv/Scripts/python.exe -m tools.prepare_submission --replay-confirmed-review
+# Pipeline theo contract BTC:
+python -m src.main --config configs/lab.yaml --output out/poc --offline --seed 42
+# Sinh Baseline/PoC, chấm dev nội bộ và replay 20 review đã được xác nhận:
+python -m tools.prepare_submission --replay-confirmed-review
+# Tests:
+python -m pytest -q
 ```
 
-Lệnh này xác minh freeze và score gốc trước khi replay review; không tạo lượt duyệt mới.
-Output chi tiết của Baseline/PoC nằm trong `out/submission/` và được ignore. Exporter chỉ giữ bộ bằng chứng PoC đã chọn,
-không ghi đè snapshot review gốc; `reports/decision_log.csv` được append, không thay lịch sử.
-`python -m tools.write_submission_report` sinh lại report từ bằng chứng và kết quả pytest đã lưu trong repo, không cần JUnit XML cục bộ.
-Ảnh BDD100K thật chỉ nằm trong `data/real/` gitignored; report chỉ lưu metadata/score/hash.
+Sau khi cài requirements và kích hoạt .venv, các lệnh trên chạy offline.
+Kết quả đang công bố là dev nội bộ, không phải điểm hidden eval. Batch sau review vẫn HOLD vì 5 ảnh ngoài budget còn chờ.
+Nhãn dev và hồ sơ adjudication được giữ để kiểm chứng; ảnh thật BDD100K chỉ nằm trong data/real/ gitignored.
+Cấu hình duy nhất là configs/lab.yaml; protocol_freeze.json giữ hash và binding của review gốc.
+Chi tiết prediction, contact sheet, slices, CI và log kiểm tra được sinh trong out/, không commit.
+
+Slide HTML có 5 slide, đủ 6 thành viên, mở trực tiếp bằng trình duyệt và dùng font/ảnh nhúng offline.
+Phím ←/→ đổi slide, F toàn màn hình, N ghi chú, O tổng quan, P in 5 trang. Link contact sheet hoạt động sau lệnh prepare_submission.
+Tag final-24h chưa chốt; khi chốt nộp phải trỏ đúng commit thực tế, không backdate.
 
 Starter repo cho bài lab **Data Pipeline, Privacy & Production PoC**: 14 challenge (T01–T14), một contract chung.
 Repo cung cấp **dữ liệu offline + hạ tầng dùng chung + metric chuẩn + template báo cáo** để nhóm tập trung vào phần quan trọng:
 vấn đề, baseline, thuật toán, đánh giá trung thực, human-in-the-loop và quyết định GO/HOLD/REWORK.
 
-> Khung lab gốc cung cấp hạ tầng. Bản Team 6 bổ sung lời giải T02 trong `src/team06/`, nối qua `src/pipeline.py`.
+> Repo **không** chứa lời giải. `src/pipeline.py` là file nhóm sở hữu; mọi thuật toán (kể cả baseline) do nhóm tự cài.
 > Tài liệu học tập, không thay tư vấn pháp lý.
 
 ## 1. Quickstart (≤ 5 phút, chạy offline)

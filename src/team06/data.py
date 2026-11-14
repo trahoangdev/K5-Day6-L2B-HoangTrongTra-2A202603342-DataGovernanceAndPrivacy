@@ -5,7 +5,7 @@ Loader + provenance guards for T02.
 `load_inputs` verifies the manifest and the images.csv schema, then returns both
 splits. `summarise_strata` reports the (camera, light) x split coverage the rest
 of the team needs before choosing a normalisation grouping — see
-reports/data_audit_t02.md and reports/HANDOFF_data_provenance.md.
+reports/group_report.md.
 
 Never read instructor ground truth or rewrite fixture manifests to hide errors.
 """

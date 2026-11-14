@@ -46,26 +46,22 @@ def test_slices_use_global_budget_not_new_budget_per_camera():
     assert b["recall"] == 8 / 12
 
 
-def test_exporter_whitelist_keeps_review_and_baseline_outputs_local(tmp_path, monkeypatch):
+def test_exporter_only_publishes_required_logs(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    output = tmp_path / "out/poc"
+    output = Path("out/poc")
     output.mkdir(parents=True)
-    for filename in submission.POC_EVIDENCE_FILES:
-        (output / filename).write_text("new run\n", encoding="utf-8")
-    for filename in ("run_info.json", "review_queue.csv", "policy_snapshot.json"):
+    for filename in ("raw_predictions.csv", "run_info.json", "review_queue.csv", "policy_snapshot.json"):
         (output / filename).write_text("local only", encoding="utf-8")
+    (output / "audit_log.jsonl").write_text("new run audit\n", encoding="utf-8")
     (output / "decision_log.csv").write_text("ts,status\nnow,HOLD\n", encoding="utf-8")
-    archived = Path("reports/submission/poc")
-    archived.mkdir(parents=True)
-    (archived / "audit_log.jsonl").write_bytes(b"original human audit\n")
-
+    Path("reports").mkdir()
+    original = Path("reports/audit_log.jsonl")
+    original.write_bytes(b"original human audit\n")
     submission.export_run_evidence("baseline", output)
-    assert not Path("reports/submission/baseline").exists()
     submission.export_run_evidence("poc", output)
-
-    assert {p.name for p in archived.iterdir()} == set(submission.POC_EVIDENCE_FILES)
-    assert (archived / "audit_log.jsonl").read_bytes() == b"original human audit\n"
-    assert Path("reports/decision_log.csv").read_text() == "ts,status\nnow,HOLD\n"
+    assert {p.name for p in Path("reports").iterdir()} == {"audit_log.jsonl", "decision_log.csv"}
+    assert original.read_bytes() == b"original human audit\n"
+    assert not Path("reports/submission").exists()
 
 
 def test_published_decision_log_is_append_only_and_replays_do_not_duplicate(tmp_path):
@@ -91,25 +87,37 @@ def test_decision_log_schema_error_does_not_change_published_history(tmp_path):
     assert published.read_bytes() == b"ts,status\nold,HOLD\n"
 
 
-def test_report_reads_saved_results_without_local_junit_xml(tmp_path, monkeypatch):
+def review_fixture(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    saved = Path("reports/submission/tests.txt")
-    saved.parent.mkdir(parents=True)
-    saved.write_text("....... [100%]\n140 passed, 39 skipped in 10.49s\n", encoding="utf-8")
-    assert not Path("out/submission/tests.xml").exists()
-    counts = submission.read_test_counts()
-    assert (counts["passed"], counts["skipped"], counts["failed"], counts["errors"]) == (140, 39, 0, 0)
+    output = Path("out/poc")
+    output.mkdir(parents=True)
+    (output / "raw_predictions.csv").write_text("image_id,score\na,1.0\n", encoding="utf-8", newline="\n")
+    (output / "review_queue.csv").write_text("item_id\na\n", encoding="utf-8")
+    human = Path("reports/review_queue.csv")
+    human.parent.mkdir()
+    human.write_text("item_id,reviewer\na,Reviewer A\n", encoding="utf-8")
+    manifest = Path("fixtures/t02_raw_qc/manifest.csv")
+    manifest.parent.mkdir(parents=True)
+    manifest.write_text("input manifest\n", encoding="utf-8")
+    proof = {"confirmed_review": {
+        "context": {"scored_sha256": submission.digest(output / "raw_predictions.csv"),
+                    "input_manifest_sha256": submission.digest(manifest), "queue_ids": ["a"]},
+        "confirmation": {"item_ids": ["a"], "confirmed_by": "Reviewer A"},
+        "review_csv_sha256": submission.digest(human)}}
+    return proof, output
 
 
-def test_saved_test_failures_and_errors_are_not_hidden(tmp_path):
-    saved = tmp_path / "tests.txt"
-    saved.write_text("1 failed, 2 passed, 3 skipped, 1 error in 1.0s\n", encoding="utf-8")
-    counts = submission.read_test_counts(saved)
-    assert (counts["passed"], counts["skipped"], counts["failed"], counts["errors"]) == (2, 3, 1, 1)
+def test_review_replays_without_a_committed_prediction_snapshot(tmp_path, monkeypatch):
+    proof, output = review_fixture(tmp_path, monkeypatch)
+    assert list(submission.confirmed_review(proof, output).item_id) == ["a"]
+    assert not Path("reports/submission").exists()
 
 
-def test_missing_test_summary_is_rejected(tmp_path):
-    saved = tmp_path / "tests.txt"
-    saved.write_text("pytest crashed before collecting tests\n", encoding="utf-8")
-    with pytest.raises(ValueError, match="No pytest summary"):
-        submission.read_test_counts(saved)
+@pytest.mark.parametrize("file,text", [("out/poc/raw_predictions.csv", "image_id,score\na,99\n"),
+                                       ("out/poc/review_queue.csv", "item_id\nother\n"),
+                                       ("reports/review_queue.csv", "item_id,reviewer\na,Imposter\n")])
+def test_review_binding_rejects_changed_score_queue_or_human(tmp_path, monkeypatch, file, text):
+    proof, output = review_fixture(tmp_path, monkeypatch)
+    Path(file).write_text(text, encoding="utf-8")
+    with pytest.raises(ValueError, match="Saved review does not match"):
+        submission.confirmed_review(proof, output)

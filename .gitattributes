@@ -5,7 +5,6 @@
 *.png binary
 *.gif binary
 *.pdf binary
-*.pptx binary
 *.zip binary
 
 # Stronger rule for fixtures: `text=auto` lets git GUESS which files are text,

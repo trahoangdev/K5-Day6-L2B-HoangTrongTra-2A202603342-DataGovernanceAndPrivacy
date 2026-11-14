@@ -90,7 +90,7 @@ def test_every_eval_stratum_is_represented_in_dev():
 
     cam_A/night appears only at eval, so a per-(camera, light) threshold cannot be
     calibrated for it. The pipeline must fall back to a coarser grouping; see
-    reports/data_audit_t02.md.
+    reports/group_report.md.
     """
     df = pd.read_csv(TRACK_DIR / "images.csv")
     cross = pd.crosstab([df.camera_id, df.light], df.split)

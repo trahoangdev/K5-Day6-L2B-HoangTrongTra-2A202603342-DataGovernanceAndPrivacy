@@ -51,7 +51,7 @@ def main() -> None:
                               "BTC synthetic dev + hf:dgural/bdd100k (local OOD smoke test)",
                               "See source manifests; BDD100K research/education restrictions")
     write_manifest(manifest, work / "manifest.csv")
-    run("-m", "src.main", "--config", "configs/submission.yaml", "--input", str(work),
+    run("-m", "src.main", "--config", "configs/lab.yaml", "--input", str(work),
         "--output", str(output), "--offline", "--seed", "42", "--run-name", "ood_smoke")
     predictions = pd.read_csv(output / "raw_predictions.csv")
     ood = predictions.loc[predictions.image_id.str.startswith("bdd-")].copy()
@@ -63,9 +63,11 @@ def main() -> None:
     ood["resized_image_sha256"] = [digest(work / p) for p in ood.path]
     fields = ["image_id", "source_file_id", "weather", "timeofday", "scene", "score",
               "pred_defect_type", "pred_action", "reason", "resized_image_sha256"]
-    ood[fields].to_csv("reports/submission/ood_scores.csv", index=False, lineterminator="\n")
+    report_dir = Path("out/submission")
+    report_dir.mkdir(parents=True, exist_ok=True)
+    ood[fields].to_csv(report_dir / "ood_scores.csv", index=False, lineterminator="\n")
     info = json.loads((output / "run_info.json").read_text(encoding="utf-8"))
-    write_json(Path("reports/submission/ood_summary.json"), {
+    write_json(report_dir / "ood_summary.json", {
         "scope": "unlabelled_real_OOD_smoke_test_not_accuracy",
         "plan": freeze["ood_plan"], "source_manifest_sha256": digest(source / "manifest.csv"),
         "n_scored": len(ood), "n_dev_reference": len(dev), "seed": 42, "offline": True,

@@ -31,15 +31,15 @@ GO khi tất cả ảnh KEEP và review bắt buộc đã có bằng chứng. GO
 
 Fixture synthetic CC0-1.0 do BTC cung cấp: 96 ảnh, 56 dev và 40 eval, 24 scene gốc, bốn biến thể mỗi scene.
 Split theo scene không rò scene giữa dev/eval. Schema `image_id,path,camera_id,light,split`; nhãn nội bộ thêm
-`defect_type,severity,is_defect,annotator,source,note`. Mapping lỗi: blur/glare/dark/compression=1, none=0.
+`defect_type,severity,is_defect,annotator,source,note`. Severity 0/1/2 là nhẹ/vừa/nặng. Mapping lỗi: blur/glare/dark/compression=1, none=0.
 Manifest hash kiểm trên byte gốc, `.gitattributes` giữ fixture verbatim để tránh LF/CRLF làm sai checksum.
 Toàn bộ 14 manifest fixture PASS; log còn gồm các manifest dữ liệu thật cục bộ, số lượng có thể khác khi clone sạch.
 
 Nhãn nội bộ cuối chỉ gồm 56 dev, 34 ảnh lỗi, 22 ảnh none.
 Hưng thực hiện một lượt và test-retest có hỗ trợ tiền gán nhãn AI, không phải hai annotator độc lập.
-Agreement binary .900, kappa .800, type agreement .850 trên 20 retest là số liệu lịch sử của Data;
-4 bất đồng đã adjudicate, giữ nguyên raw/retest/disagreement. img_18_3 có hồ sơ adjudication riêng, ghi actor AI-assisted,
-không suy diễn thành review độc lập. Nhãn chịu thiên lệch cùng đặc trưng blur nên kết quả dev có thể lạc quan.
+Bản nộp giữ nhãn dev cuối và hồ sơ adjudication; các lượt nhãn trung gian được lưu trong lịch sử Git của Data.
+img_18_3 có hồ sơ adjudication riêng, ghi actor AI-assisted,
+không suy diễn thành review độc lập. Các đường dẫn protocol lịch sử trong hồ sơ adjudication được giữ nguyên để bảo toàn record; quy ước hiện tại nằm trong báo cáo này. Nhãn chịu thiên lệch cùng đặc trưng blur nên kết quả dev có thể lạc quan.
 Không có GT eval chính thức trong student repo, không tạo hoặc suy luận GT cho 40 eval để tune.
 
 ## 3. Phương pháp và protocol
@@ -53,7 +53,7 @@ Chuẩn camera/global học từ dev; so sánh session theo batch không dùng n
 không nên diễn giải là bộ phân loại từng ảnh độc lập. Với camera lạ/singleton, dùng fallback dev.
 Weighted score cộng agreement bonus, higher nghĩa đáng ngờ hơn; score không giới hạn ở 1.
 KEEP dưới .20, REVIEW từ .20 đến dưới .60, RECAPTURE từ .60.
-Mọi tham số nằm trong `configs/submission.yaml`, SHA-256 ở `configs/protocol_freeze.json`; script từ chối nếu đầu vào freeze bị đổi.
+Mọi tham số nằm trong `configs/lab.yaml`, SHA-256 ở `configs/protocol_freeze.json`; script từ chối nếu đầu vào freeze bị đổi.
 
 Baseline/PoC dùng cùng pool, seed42, B=20, cấu hình policy và evaluator nguyên gốc.
 Metric join theo image_id, lọc split trước top-B. Queue demo top-20 toàn bộ 96 khác top-20 dev hoặc eval.
@@ -66,7 +66,7 @@ Không có weights/model cần tải lúc chạy. Thay đổi thuật toán sau 
 Số liệu dưới đây do `src.evaluate --split dev --budget 20` và `src.compare` sinh nguyên bản.
 Ghi chú `eval N` của evaluator dùng tên chung, split thực tế ở JSON là dev.
 
-Baseline: `baseline_internal_dev` (git 24807f8, seed 42) · PoC: `poc_internal_dev` (git 24807f8, seed 42)
+Baseline: `baseline_internal_dev` (git 24bf3ec, seed 42) · PoC: `poc_internal_dev` (git 24bf3ec, seed 42)
 
 | Metric (unit) | Slice | Baseline | PoC | Δ abs | Δ rel | Better | N |
 |---|---|---|---|---|---|---|---|
@@ -76,8 +76,7 @@ Baseline: `baseline_internal_dev` (git 24807f8, seed 42) · PoC: `poc_internal_d
 | False alarm in top-B (clean images in top-B / clean images) | light=day | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 36 |
 | False alarm in top-B (clean images in top-B / clean images) | light=dusk | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 16 |
 | False alarm in top-B (clean images in top-B / clean images) | light=night | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 4 |
-| Runtime / 100 items (s) | all | 0.4068 | 0.8693 | | | lower | |
-
+| Runtime / 100 items (s) | all | 0.4189 | 0.8497 | | | lower | |
 
 Cả hai chạm trần Recall@20 khả thi trên dev này: 20/34 vì số lỗi thật lớn hơn budget.
 Không có cải thiện primary metric. Type accuracy cao hơn chỉ là secondary trên cùng nhãn dev.
@@ -98,7 +97,7 @@ Các hit dưới đây dùng cùng top-20 dev toàn cục; N là số ảnh slic
 | defect_type=none | 22 | 0 | 0 | 0 |
 
 Failure 1: `img_20_3` glare vẫn có nhiều cạnh nên global Laplacian không đưa vào top-20 dev;
-PoC ưu tiên glare tốt hơn ở slice này. Xem `reports/images/hard_1_glare.png` và raw predictions.
+PoC ưu tiên glare tốt hơn ở slice này. Xem ảnh gốc [img_20_3](../fixtures/t02_raw_qc/images/img_20_3.jpg) và prediction sinh trong out/.
 Failure 2: `img_18_3` blur nặng được Baseline chọn nhưng PoC score 1.0 bị các ảnh nhiều cue đẩy ra khỏi top-20 dev.
 Đây là lỗi phân bổ budget/ranking, không chỉ lỗi nhận dạng loại defect. `img_22_1` blur nội bộ còn có PoC score 0,
 minh họa độ nhạy của nhãn nhẹ và session reference. Không chỉnh ngưỡng sau khi thấy các lỗi này.
@@ -109,15 +108,17 @@ Wilson 95% mô tả Recall: 0.4222–0.7363;
 Precision: 0.8389–1.0000.
 Tương quan frame, chọn top-B và tune dev vi phạm giả định độc lập; các khoảng này không chứng minh tổng quát hóa hoặc chênh lệch có ý nghĩa.
 Runtime đo một lần, gồm load/provenance/features/HTML/audit, không gồm startup process; không phải benchmark tối ưu.
-Máy: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel, Windows-11-10.0.26200-SP0, Python 3.12.14, code `24807f8`.
+Máy: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel, Windows-11-10.0.26200-SP0, Python 3.12.14, code `24bf3ec`.
 
 ## 5. Human review và quyết định
 
 Trà đã xác nhận trong chat: “Tôi đã xem và chấp thuận RECAPTURE cả 20 ảnh”.
-`reports/review_queue.csv` giữ reviewer, timestamp và lý do riêng từng ảnh; `review_confirmation.json` ghi nguyên văn phạm vi xác nhận.
+`reports/review_queue.csv` giữ reviewer, timestamp và lý do riêng từng ảnh; `configs/protocol_freeze.json` ghi nguyên văn phạm vi xác nhận và binding.
 AI đưa đề xuất thị giác trước, Trà chấp thuận sau khi xem. Không coi đây là đánh giá mù hoặc annotator thứ hai.
 Pipeline áp approve trên đề xuất RECAPTURE, không sửa score, metadata hay thứ hạng.
-`reports/submission/poc/audit_log.jsonl` lưu bằng chứng review gốc; CSV review cũ sai context bị chặn.
+Approve chỉ chấp thuận KEEP/RECAPTURE cụ thể; REVIEW phải dùng edit để chốt. Reject loại ảnh thành RECAPTURE;
+edit cần KEEP/RECAPTURE và lý do; skip/escalate giữ REVIEW và chặn GO. Mọi quyết định phải có reviewer và note.
+`reports/audit_log.jsonl` lưu bằng chứng review gốc; CSV review cũ sai context bị chặn.
 Snapshot review đã công bố được giữ nguyên khi replay. Decision log chuẩn ở `reports/decision_log.csv`, chỉ append run mới.
 
 Trước review: 0 reviewed, 25 pending, HOLD.
@@ -140,22 +141,37 @@ không chứng minh model phát hiện đúng lỗi. Resize/JPEG chất lượng
 Ảnh/contact sheet thật ở `data/real/` gitignored; chỉ metadata/score/hash được đưa vào report.
 Nguồn mirror và điều kiện research/education được ghi theo prep BTC; cần kiểm lại quyền sử dụng ngoài bài lab.
 
-Kiểm tra hiện tại: **146 passed, 39 skipped, 0 failed**, preflight exit0, manifest exit0.
-Các test skip cần GT overlay giảng viên. Kết quả pytest đã lưu ở `reports/submission/tests.txt`;
-report đọc kết quả đã ghi nhận này, không đòi JUnit XML cục bộ và không coi việc sinh report là chạy test mới.
-Log preflight/manifest và output chi tiết của từng lần chạy nằm trong `out/`, không đưa vào Git.
+Kiểm tra hiện tại: **147 passed, 39 skipped, 0 failed**, preflight exit0, manifest exit0.
+Các test skip cần GT overlay giảng viên. Kết quả kiểm tra được ghi nhận trong báo cáo này; log chi tiết và output tạm nằm trong `out/`, không đưa vào Git.
 QA lịch sử của Hùng trên Windows từng có 16 lỗi checksum, 118 pass và 39 skip tại 081fae2;
 đây là bằng chứng môi trường cũ, không xóa lịch sử hoặc coi là lỗi test hiện tại. Checkout giữ byte LF đã khắc phục.
 
 ```powershell
 # Sau khi cài requirements.txt vào .venv (bước chuẩn bị, có thể cần mạng):
 .venv/Scripts/python.exe -m tools.prepare_submission --replay-confirmed-review
-.venv/Scripts/python.exe -m src.evaluate --track t02 --config configs/submission.yaml --gt reports/submission/internal_dev_labels_joined.csv --pred out/submission/poc/ranked_review.csv --split dev --budget 20
+.venv/Scripts/python.exe -m src.evaluate --track t02 --config configs/lab.yaml --gt out/submission/internal_dev_labels_joined.csv --pred out/submission/poc/ranked_review.csv --split dev --budget 20
 .venv/Scripts/python.exe -m pytest -q
 # Khi giảng viên có GT: thay --gt bằng fixture GT, --split eval; không tune trên kết quả.
 # OOD chỉ sau prep online, ảnh thật giữ local:
 .venv/Scripts/python.exe -m tools.check_t02_ood
 ```
+
+### Bằng chứng 10 mẫu OOD
+
+Bảng metadata dưới đây lấy từ output của `python -m tools.check_t02_ood`; không công bố pixel ảnh thật và không có QC GT.
+
+| BDD source ID | Light | Score | Đề xuất | SHA256 ảnh sau resize |
+|---|---|---:|---|---|
+| b5dec5e7-065a0bb3 | night | 2.200744 | RECAPTURE | `736f2139f2724f3dd4aaedcd5876f6e11c47110799e2183b394fd1d7c6f664da` |
+| b27d5dcb-9230790c | dawn/dusk | 2.200000 | RECAPTURE | `06abf953ce5d20996fc3e26b3ed26450a4f740d681a4c453bc3838638ebac6a5` |
+| c78f9fc6-efac7090 | daytime | 2.200000 | RECAPTURE | `3232c40328e7d76c53ed8f8f92ddc5e1251a98bf974088c49c87ab84860015b2` |
+| b7dc9921-fcfe3332 | night | 2.182040 | RECAPTURE | `5b79c90c4535184ff74a27f2e27836b2fe10e20af3b1b6e3cc7acc1b2b3a4184` |
+| b4863201-63b08472 | daytime | 1.980718 | RECAPTURE | `635e9ecfab07cc44df2cfaeb153d91a92b043b6122b68416ff0d8d43e9ff151b` |
+| bb49071c-4b99a704 | night | 1.857073 | RECAPTURE | `3b43a4bc64d379dd701831c837bc8f4ccf855f715766536775fbb89c64aa05d9` |
+| c6a5ec44-7b0e5542 | daytime | 1.660755 | RECAPTURE | `c1302e01ad0cff1632cd14a15b1b6bb6f7c98c4e08f9cb20dc1b9c821478d862` |
+| c7f97365-5be70930 | night | 1.585758 | RECAPTURE | `ab2d7c645789b7c7d62683457b8e002390194e007b5669b557b3f000b156e7ff` |
+| b9d34460-68942f09 | daytime | 1.050000 | RECAPTURE | `799e9dbb55709a64bb591fc9582b93de0a48ab93185e4a56239ff983e8795888` |
+| bbb46ace-1e415c05 | daytime | 1.050000 | RECAPTURE | `1511b81a3a4b9b67e33293a8847cff58df0aa000f6307697e183d69d7df9bfc9` |
 
 ## 7. Giới hạn và đóng góp
 

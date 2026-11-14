@@ -1,20 +1,51 @@
-# ============================================================
-# Team 6 · T02 Raw QC Triage. Values here override
-# the track defaults loaded from `track_config`.
-# ============================================================
 group_id: G06
-owner: "Hoàng Trọng Trà - 2A202603342 (Lead / Integrator)"
+owner: Hoàng Trọng Trà - 2A202603342 (Lead / Integrator)
 track_config: tracks/t02.yaml
 track: t02
 input: fixtures/t02_raw_qc
 output: out/
 seed: 42
-offline: true                     # demo/eval must not touch the network
-strict_provenance: true           # fail if manifest.csv hashes do not match
-
-# Track params (merged over track_config.params). Freeze before evaluation.
+offline: true
+strict_provenance: true
 params:
   budget: 20
   dev_split: dev
-  review_split: all                 # evaluator separately filters eval before top-B
+  review_split: all
   policy_version: t02-lead-v1
+  laplacian_threshold: 186.855
+  scoring:
+    min_group_size: 2
+    camera_ceiling_quantile: 0.9
+    blur_drop_floor: 0.95
+    blur_drop_scale: 1.4
+    camera_drop_floor: 0.9
+    camera_drop_scale: 1.2
+    dark_drop_floor: 0.45
+    dark_drop_scale: 0.55
+    dark_p95_floor: 50.0
+    dark_p95_scale: 30.0
+    dark_frac_floor: 0.72
+    dark_frac_scale: 0.2
+    glare_sat_floor: 0.0018
+    glare_sat_scale: 0.0045
+    glare_soft_floor: 0.0015
+    glare_soft_scale: 0.012
+    glare_core_floor: 0.004
+    glare_core_scale: 0.05
+    comp_block_floor: 0.3
+    comp_block_scale: 0.9
+    comp_abs_floor: 1.85
+    comp_abs_scale: 1.1
+    weights:
+      blur: 1.0
+      dark: 1.0
+      glare: 1.05
+      compression: 0.8
+    multi_signal_floor: 0.2
+    multi_signal_bonus: 0.15
+    type_floor: 0.3
+    dark_type_floor: 0.5
+    glare_type_floor: 0.35
+    comp_type_floor: 0.45
+    keep_max: 0.2
+    review_max: 0.6

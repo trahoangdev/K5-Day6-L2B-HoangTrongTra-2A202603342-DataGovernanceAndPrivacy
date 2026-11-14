@@ -1,29 +1,17 @@
-# reports/
+# Reports của Team 6 · T02
 
-Team 6 đã sinh hồ sơ bằng `python -m tools.prepare_submission --replay-confirmed-review`.
-Các `metrics_*.json` hiện là **internal dev in-sample**, không phải official eval.
-`review_queue.csv` là 20 review thật được Trà xác nhận; `submission/` có before/after, binding, audit,
-slices, CI mô tả và OOD metadata. Ảnh/contact sheet trong thư mục này chỉ là synthetic BTC.
-Decision log chuẩn ở `reports/decision_log.csv`, giữ lịch sử cũ và chỉ append quyết định run mới.
-Xem `group_report.md` để biết giới hạn và các điều kiện nộp chưa chứng minh được.
+Bộ chính theo mẫu BTC: group_report.md, metric_contract.md, metrics_baseline.json, metrics_poc.json,
+table1_baseline_vs_poc.md, review_queue.csv, decision_log.csv và team_contributions.csv.
 
-| File | Ai tạo | Cách tạo |
-|---|---|---|
-| `group_report.md` | nhóm + script | `python -m tools.write_submission_report` từ bằng chứng đã lưu; không coi đây là lượt chạy test mới |
-| `metric_contract.md` | nhóm | protocol/freeze đã ghi nhận, có công bố giới hạn thời điểm |
-| `metrics_baseline.json` | **script** | `python -m tools.prepare_submission --replay-confirmed-review` gọi evaluator BTC với nhãn dev nội bộ |
-| `metrics_poc.json` | **script** | cùng lệnh prepare_submission; split dev, B=20, không phải official eval |
-| `table1_baseline_vs_poc.md` | **script** | `python -m src.compare reports/metrics_baseline.json reports/metrics_poc.json --out reports/table1_baseline_vs_poc.md` |
-| `review_queue.csv` | pipeline + reviewer | 20 quyết định Trà đã xác nhận, giữ reviewer/note và binding, replay không tạo review mới |
-| `decision_log.csv` | pipeline + exporter | append từ `out/submission/poc/decision_log.csv`, không ghi đè lịch sử |
-| `team_contributions.csv` | nhóm | khớp với `git shortlog -sne --all` |
+Chỉ giữ thêm bằng chứng cần kiểm chứng: audit_log.jsonl (review thật), internal_labels_t02_final.csv (gold dev nội bộ)
+và adjudication_img_18_3.json (nguồn gốc quyết định nhãn). Binding input/score/reviewer ở configs/protocol_freeze.json.
+Không đưa snapshot, handoff, nhãn trung gian, log kiểm tra hoặc file sinh tạm vào reports.
 
-Các file metrics/table **không được sửa tay** — giảng viên sẽ chạy lại lệnh để đối chiếu.
+```powershell
+python -m tools.prepare_submission --replay-confirmed-review
+```
 
-`submission/` chỉ giữ 15 file bằng chứng cần cho report, demo và replay. Bộ PoC gốc gồm
-raw predictions, image decisions, decision, review context và audit được giữ nguyên khi chạy lại.
-Baseline snapshots, queue trống, policy/run-info trùng lặp, checklist review đã xong và log kiểm tra chi tiết ở `out/`.
-Exporter không sao chép các file này trở lại reports.
-
-`submission/tests.txt` là kết quả pytest đã ghi nhận, dùng được khi clone sạch. Muốn cập nhật,
-chạy pytest, lưu đầy đủ stdout/stderr vào file này rồi sinh lại report/demo; thiếu summary sẽ báo lỗi rõ ràng.
+Lệnh dùng runner/evaluator BTC nguyên gốc, xuất metrics và bảng so sánh ở reports; prediction, contact sheet,
+GT dev đã join, slices và CI ở out/submission. Decision log chỉ append, audit review gốc không bị ghi đè.
+Report và slide là bản nộp cuối; các con số lấy từ output script, không sửa metric để đẹp số.
+Kết quả hiện tại là dev nội bộ có AI hỗ trợ gán nhãn, không phải official eval/hidden eval của giảng viên.
