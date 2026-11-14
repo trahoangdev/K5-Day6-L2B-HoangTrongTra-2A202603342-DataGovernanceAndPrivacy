@@ -6,3 +6,13 @@
 *.gif binary
 *.pdf binary
 *.zip binary
+
+# Stronger rule for fixtures: `text=auto` lets git GUESS which files are text,
+# so an unlisted extension can still get its line endings rewritten — and every
+# byte under fixtures/ is sha256-verified against manifest.csv. Checked out
+# verbatim, no guessing, no conversion.
+#
+# Concretely: fixtures/t02_raw_qc/images.csv has 97 lines, so a CRLF checkout
+# makes it 97 bytes longer, the sha256 no longer matches, verify_manifest fails
+# and strict_provenance aborts src.main with exit 2.
+fixtures/** -text
