@@ -6,6 +6,7 @@ pred_file: ranked_review.csv
 params:
   budget: 20
   dev_split: dev
+  laplacian_threshold: 186.8550
 eval_params:
   budget: 20
   split: eval
