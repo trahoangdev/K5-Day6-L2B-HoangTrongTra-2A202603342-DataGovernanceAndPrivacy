@@ -1,0 +1,37 @@
+{
+  "version": "team06-submission-v1",
+  "frozen_at_utc": "2026-11-14T14:24:33+00:00",
+  "owner": "Hoàng Trọng Trà - 2A202603342",
+  "base_commit": "ff579c64fc748e7371cf0bd50676ccd42211db53",
+  "timing_disclosure": "Late documented freeze of existing parameters before submission evidence generation. Does not establish minute-30 or minute-180 compliance. Prior dev observations exist. No official eval labels available.",
+  "scope": "internal_dev_in_sample_not_official",
+  "budget": 20,
+  "seed": 42,
+  "uncertainty": "Wilson 95% descriptive intervals for Recall@20 and Precision@20; not generalization intervals; within-scene dependence and dev tuning violate independent Bernoulli assumptions.",
+  "ood_plan": {
+    "source": "dgural/bdd100k",
+    "n": 10,
+    "sampler": "unchanged tools.download_real_samples.pick_bdd, seed 42, rare scenarios first (fog cap13); not random-representative",
+    "max_side": 640,
+    "labels": false,
+    "purpose": "local unlabelled OOD smoke test; no accuracy claim; never retune",
+    "publish": "metadata/scores/hashes only; real pixels stay gitignored data/real"
+  },
+  "sha256": {
+    "configs/submission.yaml": "baa06b4e365e5f5082b3cd4000395b16cb40911268d080efc504dd70c03e9923",
+    "configs/tracks/t02.yaml": "2379b49ceaa1ea42048cd0c9238cf960c960707dd55d1fe7b69e5340834c9f56",
+    "reports/internal_labels_t02_final.csv": "ef8d2747515cb047f9a0e405431c6607c1bab690b8204555f6936781c628a0c0",
+    "fixtures/t02_raw_qc/manifest.csv": "7faea054fdc348e363d98b406e1f762b01cc158d5b1bc0584e163069dacd4c79",
+    "src/team06/__init__.py": "759fba26db4ba7d2d077bce54c24c0e4ffcaa954051adb7bc168730aa3cbe35c",
+    "src/team06/baseline.py": "04bd967c92757b95b3ffe3110b63fc1aa4aad6fa62768d30889c1002d262ab57",
+    "src/team06/data.py": "c2eb2d340eea8df7a3130a6b36165fb188e7776a213a2de396719fa9c0919a59",
+    "src/team06/features.py": "064993394a5450a72c72342f06d1ed4e1aeef2e75e9a542dbcd20d37221772c5",
+    "src/team06/human_review.py": "5dc5479989ca6e9b1b2338566ff9a6d386fb20772895915a5976a72ab8fe7831",
+    "src/team06/integration.py": "22cd726548e1afb6dbb62501f1889e8da9c86e52d0b8a5c0d3bd114cda600258",
+    "src/team06/policy.py": "d7fc84f39afffa7ae43e8c9054955b581b837b21f10539e07a05842303b59a16",
+    "src/team06/scoring.py": "c87e4781b3feabbf420ad17b198e3162a4e29ee8cb8e29458b96c6553b7c07de",
+    "src/pipeline.py": "9831706690574d2c12c81566caa26c40f8f3252a7bd75d5565b76ca2cf799acb",
+    "src/main.py": "39fa3883f2b9906412f8a57795192f2b53e91b17947653682a756d346714eff1",
+    "src/metrics/tracks.py": "23e95f95b560b25305b80cecd5c498d4d73cfcb46d4cddd4c10522bbb8d05c59"
+  }
+}

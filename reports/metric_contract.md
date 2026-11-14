@@ -1,29 +1,39 @@
-# Metric contract (khai báo bắt buộc — chốt ở phút 30, trước khi chạy eval)
+# Metric contract · G06 / T02
 
-> Các metric chuẩn đã được cài trong `src/metrics/tracks.py`. File này là nơi nhóm **cam kết** cách dùng chúng.
-> Không đổi testset, threshold hay trọng số sau khi đã thấy kết quả eval.
+Owner: Hoàng Trọng Trà – 2A202603342. Protocol `team06-submission-v1`.
+Freeze UTC: **2026-11-14T14:24:33+00:00**. Xem `configs/protocol_freeze.json` để kiểm SHA-256 cấu hình, thuật toán, fixture manifest và nhãn nội bộ.
 
-**Team 6 · bản nháp protocol:** track, pool, budget và seed đã xác định theo đề T02.
-Ngưỡng, trọng số, cách báo CI và thời điểm freeze còn chờ nhóm chốt; đây chưa phải cam kết freeze thuật toán.
-Policy hành động của Lead đã định nghĩa theo `t02-lead-v1` (2026-11-14), xem `docs/T02_POLICY.md`;
-policy không đặt ngưỡng score mới, không dùng GT và không thay đổi score khi reviewer sửa hành động.
+Đây là freeze được ghi nhận muộn của tham số đang tồn tại, trước lần sinh hồ sơ nộp này.
+Không chứng minh đã chốt ở phút 30/180; nhóm đã quan sát dev trong phát triển.
+Không có nhãn eval chính thức trong student repo; không suy diễn điểm BTC từ dev.
 
-| Mục | Khai báo của nhóm |
+| Mục | Cam kết |
 |---|---|
-| Track | T02 · Raw QC Triage · G06 |
-| Primary metric (tên đúng như evaluator in ra) | Defect Recall@B; báo kèm Precision@B |
-| Tăng tốt hay giảm tốt? | higher |
-| Đơn vị đánh giá (image / region / pair / release / batch / case …) | image |
-| Công thức + numerator / denominator | Recall: ảnh lỗi thật trong top-B / tổng ảnh lỗi thật trên eval; Precision: ảnh lỗi thật trong top-B / số ảnh được chọn (20 nếu đủ) |
-| Cách ghép prediction ↔ GT (IoU? id? tolerance?) | image_id; evaluator lọc eval rồi sort score giảm dần |
-| Candidate pool cố định | fixtures/t02_raw_qc: 96 ảnh; 56 dev / 40 eval; giữ split gốc |
-| Review budget B / K | B=20; queue mặc định review_split=all (96 ảnh); metric top-20 sau lọc eval là pool riêng |
-| Seed | 42 |
-| Threshold policy (chọn trên dev như thế nào) | Chỉ chọn trên dev; phương pháp và giá trị ngưỡng/trọng số chưa chốt |
-| Eval split (không dùng để tune) | eval; GT chính thức do giảng viên giữ |
-| Chỉ số lỗi xấu (miss / false alarm / false reject) | Lỗi bị bỏ sót; false alarm trên ảnh sạch, nhất là ảnh đêm |
-| Slices sẽ báo cáo (≥2) | light và camera_id; bổ sung defect_type nếu có nhãn |
-| Cách báo độ bất định khi N nhỏ (Wilson CI / bootstrap) | Chưa chốt — QA đề xuất, lead xác nhận trước eval |
-| Ngày giờ chốt + người chốt | Chưa freeze; người phụ trách: Hoàng Trọng Trà – 2A202603342 |
+| Track / đơn vị | T02 Raw QC Triage / image |
+| Primary | Defect Recall@B = số ảnh lỗi thuộc top-B / tổng ảnh lỗi trong split đánh giá; higher |
+| Secondary | Precision@B = số ảnh lỗi thuộc top-B / số ảnh chọn; higher |
+| Join / ranking | image_id; score giảm dần, pipeline hòa điểm theo image_id tăng dần; evaluator BTC giữ nguyên |
+| Pool | 96 ảnh synthetic; 56 dev, 40 eval; tách theo scene gốc; không đổi fixture |
+| Budget / seed | B=20 / 42; giống nhau cho Baseline và PoC |
+| Queue demo | top-20 trên all 96; không đồng nhất với top-20 sau lọc split của evaluator |
+| Baseline | score=-Laplacian variance toàn ảnh; ngưỡng hành động 186.855 kế thừa implementation của Dương trên dev; không có log tìm ngưỡng để chứng minh tối ưu; không chỉnh lại |
+| PoC | toàn bộ tham số được ghi tường minh trong configs/submission.yaml; giữ nguyên DEFAULTS của Hạ; chuẩn camera/global chỉ fit dev; tham chiếu session theo batch không dùng nhãn |
+| Action thresholds | keep_max=0.20, review_max=0.60; score không buộc trong [0,1] |
+| Policy | t02-lead-v1, docs/T02_POLICY.md; review chỉ sửa hành động, không sửa score |
+| Internal evaluation | 56 nhãn dev cuối, AI-assisted, SHA-256 cố định; chạy evaluator BTC với --split dev --budget 20; chỉ số in-sample, không phải heldout |
+| Official evaluation | giữ --split eval, GT của giảng viên; chưa chạy được vì chưa có GT; không tạo nhãn giả cho 40 eval |
+| Slices | light, camera_id, defect_type; tính số hit theo cùng top-20 dev toàn cục, không cấp B=20 riêng cho từng slice |
+| Uncertainty | Wilson 95% cho Recall/Precision, chỉ mô tả tỷ lệ quan sát; tương quan trong scene, lựa chọn top-B và tune dev làm mất giả định Bernoulli độc lập; không dùng CI để tuyên bố tổng quát hóa hay ý nghĩa thống kê của chênh lệch |
+| OOD | 10 BDD100K do sampler có sẵn chọn seed42, ưu tiên rare/fog, max-side640; không có QC GT; chỉ kiểm khả năng chạy và phân phối score, không báo accuracy; không tune sau xem |
 
-Nếu baseline = 0 thì ghi rõ "baseline = 0" thay vì phần trăm cải thiện.
+Nếu baseline bằng 0, bảng ghi `baseline=0`, không chia phần trăm cho 0.
+Không sửa metric/evaluator BTC. Thay đổi tham số/nhãn sau freeze cần protocol phiên bản mới và công bố lý do.
+
+## Reproduce
+
+```powershell
+.venv/Scripts/python.exe -m tools.prepare_submission
+```
+
+Script xác minh freeze, manifest, chạy Baseline/PoC offline, join nhãn dev, gọi evaluator và sinh bảng, slices, CI và bằng chứng pipeline.
+Bằng chứng human review phải do reviewer thật cung cấp; script không tự duyệt.
