@@ -32,23 +32,54 @@ nhưng giả định mỗi cảnh có ít nhất một biến thể sạch.
 Kiểm trong code: `src.team06.data.uncalibratable_strata(images)` trả về
 `['cam_A/night']`. Nếu một hôm nó trả về khác, nghĩa là fixture đã đổi.
 
-### 1.2 Ngưỡng toàn cục sẽ báo nhầm có hệ thống
+### 1.2 Độ nét một mình không đủ — thiếu ở glare và compression
 
-Độ nét trung vị (Laplacian variance):
+Đo ngưỡng Laplacian toàn cục (777) trên 56 ảnh `dev`, đối chiếu
+`reports/internal_labels_t02_final.csv`:
 
-| camera | day | dusk | night |
-|---|---:|---:|---:|
-| cam_A | 944 | 777 | **1578** |
-| cam_B | **236** | 174 | 350 |
+```
+recall = 0,882      precision = 1,000
+bắt đúng 30   báo nhầm 0   BỎ SÓT 4   đúng bỏ qua 22
+```
 
-- `cam_B` mềm hơn `cam_A` gấp 4 lần ở ảnh ngày. Đó là quang học camera, không
-  phải lỗi ảnh. Một ngưỡng chung sẽ quét gần hết `cam_B` vào hàng đợi review.
-- Ảnh đêm `cam_A` **nét hơn** ảnh ngày (1578 so với 944). "Tối = lỗi" là sai.
+Không báo nhầm ảnh sạch nào. Toàn bộ sai sót là bỏ sót, và cả 4 ảnh bỏ sót đều
+**nét hơn phần lớn ảnh sạch**: ba ảnh `glare` (độ nét 873–1266, vùng cháy chỉ
+0,5–1,0% diện tích) và một ảnh `compression` (960, vỡ khối tạo cạnh giả làm
+**tăng** độ nét).
 
-Hai điều này đúng là hai trong ba failure mode mà `docs/tracks/T02.md` mục 5
-bắt phải phân tích.
+Nghĩa là chỉnh ngưỡng độ nét không cải thiện thêm được gì. Phải thêm feature:
+`saturated_fraction` ngưỡng quanh 0,2% bắt được cả ba ảnh glare.
 
----
+Chi tiết và ảnh minh hoạ: `reports/hard_cases_t02.md`.
+
+### 1.3 Ảnh đêm: đừng dùng độ sáng trung bình
+
+Ảnh đêm `cam_A` **nét hơn** ảnh ngày (trung vị 1578 so với 944). `img_18_1` sáng
+32/255 nhưng độ nét 1907 — cao nhất cả 96 ảnh — và được gán `none`. Trong `dev`
+có 7 ảnh `light != day` gán `none`, gần một phần ba số ảnh sạch.
+
+Ảnh `dark` thật có tỷ lệ pixel sát đen 31–65%, còn `img_18_1` chỉ 8%. Dùng tỷ lệ
+pixel sát đen, không dùng độ sáng trung bình.
+
+### 1.4 Đính chính: `cam_B` KHÔNG mềm hơn
+
+Một bản trước của tài liệu này viết rằng `cam_B` mềm hơn `cam_A` gấp 4 lần do
+quang học, nên ngưỡng toàn cục sẽ báo nhầm cả loạt `cam_B`. **Điều đó sai.**
+
+Con số đó là trung vị trên *toàn bộ* ảnh (`cam_A` 928 vs `cam_B` 294), và nó thấp
+chỉ vì các cảnh `cam_B` trong fixture có nhiều biến thể bị làm hỏng hơn — 3 hỏng
+trên 4, so với 2 trên 4 ở `cam_A`. So **biến thể nét nhất của mỗi cảnh**, tức xấp
+xỉ bản sạch của cảnh đó, thì ngược lại:
+
+| | cam_A | cam_B |
+|---|---:|---:|
+| trung vị bản sạch từng cảnh | 1121 | **1418** |
+
+Đo thực tế cũng xác nhận: precision của ngưỡng toàn cục là 1,000, không báo nhầm
+ảnh `cam_B` nào. Failure mode số 3 của handout không xảy ra ở fixture này.
+
+Vẫn nên chuẩn hoá theo `camera_id` để phòng, nhưng **đừng dựa vào bẫy này để giải
+thích kết quả**.
 
 ## 2. Trạng thái dữ liệu
 
