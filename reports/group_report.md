@@ -12,9 +12,11 @@
 | Challenge | T02 · Raw QC Triage |
 | Thành viên (5–6) + vai trò | Hoàng Trọng Trà – 2A202603342 (Lead / Integrator); Nguyễn Quốc Hưng – 2A202603324 (Data & Provenance); Phạm Văn Dương – 2A202603332 (Baseline & Research); Nguyễn Nhật Hạ – 2A202603325 (Core Algorithm / PoC); Lê Trần Phi Hùng – 2A202603353 (QA & Evaluation); Nguyễn Tuấn Minh – 2A202603349 (Human Review & Demo) |
 | Git URL | https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy |
-| Tag `demo-180m` (commit) | [demo-180m](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/demo-180m), annotated tag; tra commit bằng `git rev-parse demo-180m^{commit}`. Tạo bổ sung sau mốc 16:00, không chứng minh freeze đúng phút 180. |
-| Tag `final-24h` (commit) | [final-24h](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/final-24h), annotated tag; tra commit bằng `git rev-parse final-24h^{commit}`. Cùng commit chốt hiện tại với tag demo, timestamp thực tế trong Git. |
+| Tag `demo-180m` (commit) | [demo-180m](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/demo-180m), annotated tag tại `22a7967ae3e3e6f1be400a5cfe29cdd02f1f938c`, tạo 14/11/2026 23:36:16 UTC+7. Giữ nguyên snapshot demo; tạo sau mốc 16:00 nên không chứng minh freeze đúng phút 180. |
+| Tag `final-24h` (commit) | [final-24h](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/final-24h), annotated tag được chốt lại sau `22a7967` để giữ README gốc và đồng bộ bằng chứng đóng góp. Tra commit bằng `git rev-parse final-24h^{commit}`, thời điểm thực tế bằng `git show --no-patch final-24h`; tag demo giữ nguyên ở snapshot trước. |
 | Deadline (giờ VN) | **15/11/2026 11:59 (UTC+7)**, theo Trà cung cấp ngày 14/11/2026. Bắt đầu 14/11/2026 13:00; mốc 180 phút là 16:00 cùng ngày. Dùng hạn cụ thể này, không suy ra deadline từ thời điểm commit hoặc tên tag. |
+
+README giữ nguyên guideline BTC theo yêu cầu của nhóm. Link repo, tag và deadline đặt tại mục 00 của report này; điều kiện đặt link ngay trong README của checklist BTC được ghi là chưa thực hiện ở Bảng 3. Chốt tag không thay thế bằng chứng commit cá nhân, showcase hoặc điểm hidden eval.
 
 ## 01 · Problem statement
 
@@ -151,9 +153,9 @@ pytest -q
 | Phạm Văn Dương – 2A202603332 | pvd2201 / pvd2201@gmail.com | Baseline & Research; `src/team06/baseline.py` | `684924a` | Chưa ghi nhận |
 | Nguyễn Nhật Hạ – 2A202603325 | Nguyen Ha / hgnguyen47347714@gmail.com | Core Algorithm / PoC; `src/team06/features.py`, `scoring.py` | `e75920f` | Chưa ghi nhận |
 | Lê Trần Phi Hùng – 2A202603353 | LTPhiHung / phihung15032001@gmail.com | QA & Evaluation; `tests/test_team06*.py` | `081fae2`; `bfc33ed` | Chưa ghi nhận |
-| Nguyễn Tuấn Minh – 2A202603349 | Chưa xác minh | Human Review & Demo (phân công ban đầu); chưa xác minh module đóng góp | Chưa có commit thực chất được xác minh | Chưa ghi nhận |
+| Nguyễn Tuấn Minh – 2A202603349 | minhnguyen03 / minhdzvkl203@gmail.com (thông tin tài khoản được cung cấp; chưa đối chiếu qua commit) | Human Review & Demo (phân công ban đầu); chưa xác minh module đóng góp | Chưa có commit thực chất được xác minh | Chưa ghi nhận |
 
-Vai trò là phân công ban đầu; Lead đã tiếp quản phần chưa hoàn tất. Giữ tác giả/commit thực tế, không ghi thay Minh. AI hỗ trợ code và soạn hồ sơ; 20 review thật được Trà xác nhận riêng. Chưa có bằng chứng đã showcase của từng người.
+Vai trò là phân công ban đầu; Lead đã tiếp quản phần chưa hoàn tất. Đã đối chiếu các commit được dẫn với Git author/email cho 5/6 thành viên. Danh tính tài khoản của Minh được ghi theo thông tin cung cấp, chưa có module/commit để xác minh đóng góp; không gán commit thay thành viên. AI hỗ trợ code và soạn hồ sơ; 20 review thật được Trà xác nhận riêng. Chưa có bằng chứng đã showcase của từng người.
 
 ## 11 · References
 
@@ -167,8 +169,8 @@ Vai trò là phân công ban đầu; Lead đã tiếp quản phần chưa hoàn 
 
 **Bảng 3 · Checklist chốt khi nộp**
 
-- [x] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật. **Tag annotated `demo-180m` và `final-24h` ghi thời gian thực tế; deadline 15/11/2026 11:59 UTC+7 theo Trà cung cấp. Không khẳng định freeze demo đúng phút 180.**
+- [ ] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật. **Link repo/tag và deadline nằm tại mục 00 của report; input/slide dùng fixture synthetic, không chứa PII thật.**
 - [x] Đúng 1 lệnh run, 1 lệnh evaluate, 1 lệnh tests; không cần download khi chạy. **Flow dev nội bộ ở mục 08; official GT do BTC cấp.**
 - [x] Có baseline/PoC metrics, ≥1 failure case, reviewer evidence, decision log.
 - [x] Có license/source provenance, data splits, seed, offline environment, GT/eval N. **Dev 56/eval fixture 40; hidden N chưa được cấp và đã công bố rõ.**
-- [ ] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên. **Chưa có bằng chứng thành viên thứ sáu.**
+- [ ] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên. **Đã xác minh 5/6 thành viên; Minh chưa có module/commit thực chất được xác minh. Có tên tài khoản/email chưa đủ đáp ứng điều kiện này.**
