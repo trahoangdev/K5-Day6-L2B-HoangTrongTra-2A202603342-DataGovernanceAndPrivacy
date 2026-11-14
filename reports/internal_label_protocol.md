@@ -96,6 +96,48 @@ test-retest gần 1,0 trong khi bộ nhãn sai hệ thống.
 Báo cáo ghi nguyên văn: *"một người gán, N=56, không đo được κ giữa hai người;
 độ nhất quán test-retest trên 20 ảnh = …"*.
 
+## 3c. Có dùng tiền-gán-nhãn bằng máy
+
+Trước khi gán, người gán đã xem một **bảng gợi ý do máy sinh** (Claude Code), đề
+xuất nhãn cho cả 56 ảnh dựa trên quan sát ảnh ở kích thước thật cộng với số đo
+`laplacian_variance`, `saturated_fraction`, `dark_fraction`. Người gán duyệt lại
+từng ảnh và tự quyết nhãn cuối.
+
+Kết quả đối chiếu: **trùng 55/56 (98,2%)**, lệch duy nhất ở `img_22_1`, chỗ người
+gán chọn `blur` còn máy đề xuất `none`.
+
+**Con số 98,2% này không phải bằng chứng nhãn đúng.** Hai bộ không độc lập — người
+gán nhìn gợi ý trước khi quyết. Nó chỉ cho biết người gán phần lớn đồng ý với gợi
+ý, điều đó là hiển nhiên. Ghi lại ở đây để người chấm biết đúng cách bộ nhãn này
+ra đời, không để ai trích dẫn nhầm thành độ chính xác.
+
+### Thiên lệch đo được: nhãn trùng với feature của baseline
+
+Sau khi gán xong, phân bố độ nét theo nhãn:
+
+| Nhãn | n | `laplacian_variance` | trung vị |
+|---|---:|---|---:|
+| `none` | 22 | 782 – 1907 | 1103 |
+| `blur` | 15 | 2 – 773 | 6 |
+
+Hai nhóm **tách hoàn toàn**: `none` thấp nhất 782, `blur` cao nhất 773, khe hở 9
+đơn vị. Nghĩa là một **ngưỡng Laplacian toàn cục** đặt quanh 777 tái tạo được
+đúng phần `blur`/`none` của bộ nhãn này trên `dev`.
+
+Baseline mà `docs/tracks/T02.md` quy định **chính là** một ngưỡng Laplacian toàn
+cục. Nên đo trên bộ nhãn này, baseline sẽ đạt gần tối đa ở phần blur, và PoC rất
+khó chứng minh là hơn — **không phải vì PoC dở, mà vì bộ nhãn được gán bằng đúng
+tiêu chí mà baseline dùng**.
+
+Hệ quả cho nhóm khi đọc kết quả:
+
+- Không kết luận "PoC không hơn baseline" từ riêng bộ nhãn này.
+- Phần có giá trị phân biệt nằm ở `dark`, `glare`, `compression` — những lỗi mà
+  ngưỡng độ nét không giải quyết được. Nên báo metric tách theo `defect_type`,
+  không chỉ một con số gộp.
+- Nhãn của giảng viên (`gt/`) không có thiên lệch này, nên thứ hạng baseline/PoC
+  khi chấm chính thức có thể khác hẳn.
+
 ## 4. Ngưỡng chấp nhận
 
 Vì chỉ một người gán, ngưỡng áp lên chỉ số test-retest:
@@ -118,6 +160,8 @@ thay thế bảng trên, vì nó mạnh hơn.
   nhìn cùng bộ ảnh có ra kết quả tương tự không. Test-retest bắt được tiêu chí
   không ổn định, nhưng **không** bắt được thiên lệch mà người gán giữ nhất quán
   từ đầu tới cuối — ví dụ tin sai rằng mọi ảnh đêm đều là `dark`.
+- **Nhãn trùng tiêu chí với baseline** ở phần blur — xem mục 3c. Đây là giới hạn
+  nặng nhất của bộ nhãn này.
 - N=56, chỉ trên `dev`. Khoảng tin cậy của mọi tỷ lệ rất rộng; không kết luận mạnh từ chênh lệch vài ảnh.
 - Người gán nhãn cũng là người viết thuật toán → có thiên lệch xác nhận. Giảm bớt bằng cách
   gán nhãn **trước** khi nhìn điểm số của pipeline, và ghi lại thời điểm.
