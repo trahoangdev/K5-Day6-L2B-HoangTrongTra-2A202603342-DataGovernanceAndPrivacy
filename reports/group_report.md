@@ -94,8 +94,11 @@ python -m src.evaluate --track t__ --pred out/<file> --out reports/metrics_poc.j
 pytest -q
 ```
 
-- Output của `pytest -q`: ____
-- Máy / CPU / OS / Python: ____ · git sha: ____
+- Output của `pytest -q`: **118 passed, 39 skipped, 16 failed in 19.03s**.
+- Team 6 QA tests: **73 passed in 9.77s** with:
+  `.\.venv\Scripts\python.exe -m pytest tests/test_team06.py tests/test_team06_scoring.py tests/test_team06_integration.py -q -o addopts=""`
+- Máy / CPU / OS / Python: Intel Core i5-8265U @ 1.60 GHz · Windows 10.0.19045 · Python 3.12.10 · git sha `081fae2c7dc64827b5056284872940f167ba935e`.
+- Full-suite blocker: **16 failures** đều do checksum fixture; `14/14` manifest không khớp. T02: `fixtures/t02_raw_qc/images.csv` expected `26a54d9de362b92139554efec64a2710586a8c2d58a23fd02f8c4ff4c93bd7c7`, actual `4b2b5bb9e79fc2bdd034fcf0df9ff77a9b00922bb016bcfb624c3226ca888451`.
 
 ## 09 · Limitations & ethics
 
@@ -114,7 +117,7 @@ pytest -q
 | Nguyễn Quốc Hưng – 2A202603324 | Chờ xác nhận | Data & Provenance | Chưa ghi nhận | Chờ phân công |
 | Phạm Văn Dương – 2A202603332 | Chờ xác nhận | Baseline & Research | Chưa ghi nhận | Chờ phân công |
 | Nguyễn Nhật Hạ – 2A202603325 | Chờ xác nhận | Core Algorithm / PoC | Chưa ghi nhận | Chờ phân công |
-| Lê Trần Phi Hùng – 2A202603353 | Chờ xác nhận | QA & Evaluation | Chưa ghi nhận | Chờ phân công |
+| Lê Trần Phi Hùng – 2A202603353 | Chờ xác nhận | QA & Evaluation | `tests/test_team06.py`, `tests/test_team06_scoring.py`, `tests/test_team06_integration.py`; kiểm tra success/failure, provenance, schema, seed 42, offline, dev-only calibration, review/policy contract và baseline/PoC | 73 targeted tests passed; full suite còn 16 lỗi checksum fixture |
 | Nguyễn Tuấn Minh – 2A202603349 | Chờ xác nhận | Human Review & Demo | Chưa ghi nhận | Chờ phân công |
 
 ## 11 · References
