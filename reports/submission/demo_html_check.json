@@ -1,7 +1,7 @@
 {
   "checked_at_utc": "2026-11-14T14:56:08+00:00",
   "file": "demo/index.html",
-  "sha256": "65464650b375d8b1352f5c1959cabeadc9560d14bf300fe4f8342aabce4a2a96",
+  "sha256": "3ab9cdcc831879675b30da2dc274d12e3c9af704bbede9b119df13b44a8d5fb8",
   "slide_count": 5,
   "identity": "Shared Team 6 presentation; six members listed; reviewer actor preserved truthfully",
   "browser": "Playwright Chromium",
