@@ -92,24 +92,35 @@ git rm --cached -r . && git reset --hard
 ## 3. Nhãn nội bộ
 
 Repo không có `fixtures/*/gt/`, nên muốn chốt ngưỡng phải tự gán nhãn.
-`docs/TEAM06.md` giao việc này cho **Hưng và Phi Hùng**.
+`docs/TEAM06.md` giao việc này cho **Hưng và Phi Hùng**, nhưng thực tế chỉ
+**một người (Hưng)** gán được.
+
+Hệ quả phải nói rõ với Lead: **không có Cohen's κ giữa hai người**. Thay bằng
+độ nhất quán test-retest của chính người gán — yếu hơn, và không phát hiện được
+thiên lệch mà người gán giữ nhất quán. Nếu Phi Hùng gán thêm được một bộ độc lập
+thì chạy lại script là có κ thật.
 
 Quy trình đầy đủ ở `reports/internal_label_protocol.md`. Tóm tắt:
 
 ```bash
+# lượt 1: toàn bộ 56 ảnh dev
 python tools/make_label_sheet.py --track t02 --split dev --annotator A --by-scene
-# Phi Hùng dùng --annotator B
+# nghỉ ít nhất 15 phút, rồi lượt 2: 20 ảnh ngẫu nhiên, thứ tự khác
+python tools/make_label_sheet.py --track t02 --split dev --annotator A \
+    --sample 20 --suffix retest --seed 7
 ```
 
-Mở file HTML sinh ra, gán 56 ảnh `dev`, bấm Export CSV, lưu thành
-`reports/internal_labels_t02_{A,B}.csv`, rồi:
+Mở file HTML sinh ra, gán, bấm Export CSV, lưu thành
+`reports/internal_labels_t02_A.csv` và `..._A_retest.csv`, rồi:
 
 ```bash
-python tools/merge_internal_labels.py
+python tools/merge_internal_labels.py \
+    --a reports/internal_labels_t02_A.csv \
+    --b reports/internal_labels_t02_A_retest.csv
 ```
 
-Script in Cohen's κ và xuất danh sách ảnh hai người gán khác nhau để ngồi chốt.
-Ngưỡng nhận: κ ≥ 0,70.
+Script tự nhận ra cùng một người và in ở chế độ TEST-RETEST.
+Ngưỡng nhận: ≥ 0,70.
 
 Hai quy ước chốt trước, chính là chỗ hai người dễ lệch nhau nhất:
 

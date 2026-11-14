@@ -13,8 +13,8 @@ phải ghi rõ là "đo trên nhãn nội bộ, N=…", không được trình b
 |---|---|
 | Split được gán nhãn | `dev` (56 ảnh) — **toàn bộ**, không lấy mẫu |
 | Split **không** gán nhãn | `eval` (40 ảnh) |
-| Số người gán | 2, độc lập (xem mục 3b nếu chỉ có 1) |
-| Công cụ | `reports/internal_label_sheet_t02_<A\|B>.html`, mở offline bằng trình duyệt |
+| Số người gán | **1** (Quốc Hưng) — xem mục 3b |
+| Công cụ | `reports/internal_label_sheet_t02_A_byscene.html`, mở offline bằng trình duyệt |
 
 Gán hết 56 ảnh `dev` thay vì lấy mẫu vì số lượng đủ nhỏ (khoảng 10 phút một người),
 và như vậy không phải chịu thêm sai số lấy mẫu khi ước lượng tỷ lệ lỗi.
@@ -52,19 +52,18 @@ Hai quy ước này ứng với failure mode số 1 và số 3 mà handout bắt
 
 ## 3. Quy trình
 
-1. Mỗi người mở file sheet của mình, gán hết 56 ảnh, bấm **Export CSV**.
-2. Đổi tên file tải về thành `reports/internal_labels_t02_A.csv` và `..._B.csv`.
-3. Chạy `python tools/merge_internal_labels.py` để đo mức đồng thuận và xuất danh sách
-   ảnh hai người gán khác nhau.
-4. Ảnh lệch nhau: hai người xem lại cùng nhau, chốt một nhãn, ghi lý do vào cột `note`.
-   Không lấy trung bình, không bỏ phiếu đa số với hai người.
-5. Kết quả cuối lưu ở `reports/internal_labels_t02_final.csv`, là file duy nhất
-   pipeline và báo cáo được phép dùng.
+`docs/TEAM06.md` giao việc gán nhãn cho **Hưng và Phi Hùng**. Trên thực tế chỉ có
+một người làm được, nên bộ nhãn này là **một người gán**. Ghi lại ở đây để người
+chấm và Lead thấy đúng tình trạng, không suy ra từ phân công rằng đã có hai người.
 
-## 3b. Phương án dự phòng: chỉ có một người gán
+Quy trình thực hiện ở mục 3b. Nếu sau đó Phi Hùng gán được một bộ độc lập, chạy
+`tools/merge_internal_labels.py` với hai file của hai người — script tự nhận ra
+và chuyển sang chế độ đo Cohen's κ, lúc đó mục 3b trở thành dự phòng.
 
-Nếu không huy động được người thứ hai, vẫn gán và vẫn dùng được, nhưng **không
-tính được Cohen's κ giữa hai người**. Không bịa con số đó ra.
+## 3b. Quy trình thực tế: một người gán
+
+Chỉ một người gán thì **không tính được Cohen's κ giữa hai người**. Không bịa
+con số đó ra.
 
 Thay vào đó đo **độ nhất quán test-retest** của chính người gán:
 
@@ -99,17 +98,26 @@ Báo cáo ghi nguyên văn: *"một người gán, N=56, không đo được κ 
 
 ## 4. Ngưỡng chấp nhận
 
+Vì chỉ một người gán, ngưỡng áp lên chỉ số test-retest:
+
 | Chỉ số | Ngưỡng | Nếu không đạt |
 |---|---|---|
-| Cohen's κ trên `is_defect` | ≥ 0,70 | Xem lại quy ước ở mục 2, gán lại từ đầu |
-| Tỷ lệ đồng thuận `defect_type` | ≥ 0,70 | Gộp các loại hay nhầm nhau, ghi vào report |
+| Nhất quán test-retest trên `is_defect` (20 ảnh) | ≥ 0,70 | Xem lại quy ước ở mục 2, gán lại từ đầu |
+| Nhất quán test-retest trên `defect_type` | ≥ 0,70 | Gộp các loại hay nhầm nhau, ghi vào report |
 | Số ảnh chưa gán | 0 | Gán nốt trước khi dùng |
 
-κ dưới 0,70 nghĩa là chính nhóm còn chưa thống nhất "thế nào là lỗi". Chỉnh ngưỡng
-thuật toán theo một bộ nhãn như vậy là chỉnh theo nhiễu.
+Dưới 0,70 nghĩa là tiêu chí "thế nào là lỗi" của chính người gán còn chưa ổn định.
+Chỉnh ngưỡng thuật toán theo một bộ nhãn như vậy là chỉnh theo nhiễu.
+
+Nếu sau này có bộ nhãn thứ hai của người khác, ngưỡng κ ≥ 0,70 giữa hai người
+thay thế bảng trên, vì nó mạnh hơn.
 
 ## 5. Giới hạn phải nêu trong báo cáo
 
+- **Một người gán.** Không có κ giữa hai người, nên không biết liệu người khác
+  nhìn cùng bộ ảnh có ra kết quả tương tự không. Test-retest bắt được tiêu chí
+  không ổn định, nhưng **không** bắt được thiên lệch mà người gán giữ nhất quán
+  từ đầu tới cuối — ví dụ tin sai rằng mọi ảnh đêm đều là `dark`.
 - N=56, chỉ trên `dev`. Khoảng tin cậy của mọi tỷ lệ rất rộng; không kết luận mạnh từ chênh lệch vài ảnh.
 - Người gán nhãn cũng là người viết thuật toán → có thiên lệch xác nhận. Giảm bớt bằng cách
   gán nhãn **trước** khi nhìn điểm số của pipeline, và ghi lại thời điểm.
