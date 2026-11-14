@@ -162,4 +162,3 @@ hồ sơ freeze/evaluation, QA bổ sung, human review và demo. Phân công ban
 Giữ nguyên Git evidence của các thành viên đã đóng góp; không tạo commit thay tên Nguyễn Tuấn Minh.
 Trà đã xem và chấp thuận20 đề xuất RECAPTURE, có xác nhận và audit trong `reports/submission/`.
 Điều kiện BTC mỗi người có commit thực chất vẫn chưa đủ bằng chứng cho thành viên thứ sáu.
-

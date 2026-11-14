@@ -8,7 +8,7 @@ Chưa review thì decision HOLD là bình thường; metric chính thức vẫn 
 
 **Hồ sơ nộp Team 6:** [báo cáo](reports/group_report.md), [protocol đã freeze](reports/metric_contract.md),
 [bảng Baseline–PoC](reports/table1_baseline_vs_poc.md), [review của Trà](reports/review_queue.csv),
-[demo 5 slide](demo/team06_t02.pptx), [kịch bản demo](demo/README.md).
+[demo HTML 5 slide của Team 6](demo/index.html), [kịch bản demo](demo/README.md).
 Trà tiếp quản các phần còn lại; Git contribution cũ giữ nguyên và nêu minh bạch trong báo cáo.
 Kết quả hiện tại là **dev nội bộ**, không phải điểm eval chính thức. Sau 20 review thật, batch vẫn HOLD do 5 ảnh ngoài budget còn chờ.
 

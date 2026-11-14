@@ -1,0 +1,25 @@
+{
+  "git_sha": "215512202e8dc0acbac4b345320aace67f7739b8",
+  "checks": [
+    {
+      "check": "reproduce",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "check": "tests",
+      "exit_code": 0,
+      "expected_exit": 0
+    },
+    {
+      "check": "official_gt_absence",
+      "exit_code": 2,
+      "expected_exit": 2
+    }
+  ],
+  "n_reviewed": 20,
+  "n_pending": 5,
+  "decision": "HOLD",
+  "raw_scores_replay_matched": true,
+  "real_data_download_required": false
+}

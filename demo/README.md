@@ -1,26 +1,53 @@
-# Demo T02 · Trà trình bày
+# Slide chung Team 6 · T02
 
-Mở `team06_t02.pptx` (5 slide, có speaker notes), khoảng 3 phút.
-`slides.md` và `slides_source.json` chứa nội dung sinh từ bằng chứng bằng `python -m tools.write_submission_report`.
-File PowerPoint đã qua kiểm tra cấu trúc/layout và xem từng slide bằng renderer, chưa chạy trình chiếu PowerPoint native.
+**Mở `index.html` trực tiếp bằng Chrome/Edge/Firefox.** File HTML tự chứa font, ảnh synthetic, CSS và JavaScript, không cần internet hoặc cài dependency để trình chiếu.
+Có5 slide, thời lượng khoảng3 phút. Trang mở đầu ghi đủ6 thành viên và phân công ban đầu. Tên reviewer thật chỉ xuất hiện ở phần bằng chứng review.
 
-## Thao tác demo
+## Điều khiển
 
-1. Giới thiệu vấn đề và budget20, mở slide 1–2 (60 giây).
-2. Chạy `.venv/Scripts/python.exe -m tools.prepare_submission --replay-confirmed-review`.
-   Mở `reports/table1_baseline_vs_poc.md` và slide3 (45 giây).
-   Nói rõ đây là dev nội bộ, primary không tăng, chưa có GT eval chính thức.
-3. Mở `reports/submission/contact_sheet.html`, `reports/review_queue.csv`,
-   `reports/submission/poc/decision.json` và audit log, chuyển slide4 (45 giây).
-   Trà đã xem/chấp thuận20 RECAPTURE. 5 pending ngoài top20 giữ HOLD; không tăng budget.
-4. Slide5 (25 giây): test, OOD không có QC GT, giới hạn đóng góp/thời hạn và bước tiếp theo.
+- Mũi tên, PageUp/PageDown, Space hoặc nút Trước/Tiếp: chuyển slide.
+- Home/End: đầu/cuối; nút số hoặc URL `#slide-3`: đến slide cụ thể.
+- F: toàn màn hình; N: ghi chú diễn giả; O: tổng quan5 slide.
+- P hoặc In/PDF: in đủ5 trang ngang, không in phần điều khiển/ghi chú.
+- Điện thoại dọc: nội dung xếp lại để đọc; vuốt ngang để đổi slide.
 
-Ảnh minh họa trên slide là fixture synthetic CC0-1.0 của BTC.
-Không đưa ảnh/contact sheet BDD100K thật lên cloud hoặc repo.
-Không dựng GO, score official, commit của thành viên khác hoặc tag đúng thời hạn khi chưa có bằng chứng.
+Liên kết báo cáo/contact sheet cần giữ cấu trúc repo. Bản trình chiếu chính vẫn tự chứa khi chỉ copy một file HTML.
+Ảnh đều từ fixture synthetic CC0 của BTC, không nhúng ảnh BDD100K thật.
+Font Manrope theo SIL Open Font License, license nằm trong HTML và `Manrope-OFL.txt`.
 
-## Rebuild PowerPoint
+## Nội dung theo guideline BTC
 
-`build_slides.mjs` dùng bundled `@oai/artifact-tool`, không thêm dependency cho pipeline Python.
-Truyền đường dẫn module artifact-tool, thư mục skill presentations và Python runtime làm ba đối số.
-Finalizer không ghi đè file đã có: lưu bản cũ trước khi rebuild.
+1. Bài toán T02, budget20 và6 thành viên Team6.
+2. Pipeline5 bước, Baseline/PoC, dev/eval, seed và freeze.
+3. Metric sinh bằng script, so sánh cùng budget/pool; nêu rõ kết quả dev nội bộ.
+4. Human review, audit, HOLD và failure cases có ảnh.
+5. Reliability, checkout sạch,10 OOD, lệnh demo và giới hạn còn lại.
+
+Xem `GUIDELINE_CHECK.md` để đối chiếu yêu cầu và bằng chứng. Không tự gán điểm rubric.
+
+## Sinh lại từ bằng chứng
+
+```powershell
+python -m tools.build_demo_html
+```
+
+Lệnh dùng JSON/CSV đã commit trong reports; không cần mạng, không sửa số liệu bằng tay.
+Font được lấy lại từ HTML đã có. Source layout ở `slides.template.html`.
+`python -m tools.write_submission_report` chỉ sinh report/contribution; không ghi đè slide HTML.
+
+## Kịch bản demo khoảng3 phút
+
+- Slide1:25 giây, bài toán và nhóm.
+- Slide2:40 giây,5 bước, baseline/PoC và protocol.
+- Slide3:40 giây, số liệu dev; primary không tăng, chưa có score official.
+- Slide4:45 giây, mở contact sheet/review/audit và decision;5 ảnh ngoài top20 giữ HOLD.
+- Slide5:30 giây, reliability/OOD và giới hạn.
+
+Chuẩn bị terminal trước khi trình bày và chạy:
+
+```powershell
+python -m tools.prepare_submission --replay-confirmed-review
+```
+
+Đây là replay20 quyết định Trà đã xác nhận, không phải20 lượt review mới.
+Bản PowerPoint cũ đã được thay bằng HTML dùng chung cho Team6.

@@ -226,17 +226,7 @@ Còn giới hạn nộp: official score do giảng viên chấm, bằng chứng 
 tag/thời hạn lịch sử chưa xác minh và batch hiện tại vẫn HOLD. Không báo các mục này là hoàn tất.
 '''
     Path("reports/group_report.md").write_text(report, encoding="utf-8", newline="\n")
-    slides = [
-        {"title": "T02 Raw QC Triage", "body": ["Team 6", "Hoàng Trọng Trà · 2A202603342", "Offline ranking, human review và quyết định batch"], "notes": "Mở đầu 20 giây. Nhóm chọn 20 ảnh cần kiểm trước khi dùng dữ liệu downstream. Evidence: reports/group_report.md. Fixture synthetic BTC CC0-1.0."},
-        {"title": "Pipeline và protocol", "body": ["96 ảnh synthetic: 56 dev, 40 eval", "Baseline Laplacian và PoC blur / dark / glare / JPEG", "Seed 42, B=20, tham số freeze trong submission.yaml", "Load, score, rank, human review, decide"], "notes": "40 giây. Chạy một lệnh prepare_submission --replay-confirmed-review. Dev calibration, không đọc GT. Tham chiếu session phụ thuộc batch. Freeze muộn, không tuyên bố mốc phút30. Sources: configs/protocol_freeze.json; BTC docs/tracks/T02.md; OpenCV Laplacian tutorial; SciPy binary_erosion docs."},
-        {"title": "Kết quả trên dev nội bộ", "body": [f"Cả hai: Recall@20 {recall['numerator']}/{recall['denominator']}, Precision@20 {precision['numerator']}/{precision['denominator']}", "PoC tăng ưu tiên glare/dark, giảm hit blur", "Nhãn dev AI-assisted, đã dùng trong phát triển", "Chưa có điểm eval chính thức từ BTC"], "notes": "45 giây. Không tuyên bố tăng primary. Bảng editable lấy đúng JSON. img_18_3 blur bị đẩy khỏi top20 PoC. Wilson chỉ mô tả, không là CI tổng quát hóa. Sources: reports/metrics_baseline.json, metrics_poc.json, submission/slices.csv, uncertainty.json."},
-        {"title": "Review của Trà và quyết định HOLD", "body": [f"Trà đã xem và chấp thuận RECAPTURE {counts['n_reviewed']} ảnh", f"{counts['n_keep']} KEEP, {counts['n_recapture']} RECAPTURE, {counts['n_pending']} ảnh chờ ngoài top-20", "Audit giữ reviewer, lý do và before/after", "Review không thay score hoặc budget"], "notes": "45 giây. Mở reports/submission/contact_sheet.html, review_queue.csv, audit_log.jsonl và decision.json. Bằng chứng user confirmation được ghi riêng. Chưa xử lý5ảnh ngoàiqueue nên HOLD hợp policy. Không dựng GO để làm đẹp demo. Sources: reports/submission/review_confirmation.json; reports/submission/poc/decision.json; docs/T02_POLICY.md."},
-        {"title": "Kiểm tra và giới hạn", "body": [test_summary, f"{ood['n_scored']} ảnh BDD100K foggy chạy offline, không có QC GT", "Mọi ảnh OOD bị đề xuất RECAPTURE, cần kiểm tra domain", "Còn thiếu commit thực chất của thành viên thứ sáu", "Bước tiếp theo: review phần chờ và chấm eval của BTC"], "notes": "25 giây. Không đưa ảnh thật lên cloud. Không giả tag lịch sử hoặc commit tác giả khác. Trà tiếp quản các phần còn lại. Sources: reports/submission/tests.txt, ood_summary.json, team_contributions.csv. Sampler rare-first seed42, không đại diện phân phối thật. Tổng khoảng175giây."},
-    ]
-    Path("demo/slides_source.json").write_text(json.dumps(slides, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
-    source = "\n\n---\n\n".join(f"# {s['title']}\n\n" + "\n\n".join(s["body"]) + "\n\nNotes: " + s["notes"] for s in slides)
-    Path("demo/slides.md").write_text(source + "\n", encoding="utf-8", newline="\n")
-    print("Generated report, verified Git contribution table, and 5-slide demo source.")
+    print("Generated group report and verified Git contribution table. HTML demo: python -m tools.build_demo_html")
 
 
 if __name__ == "__main__":
