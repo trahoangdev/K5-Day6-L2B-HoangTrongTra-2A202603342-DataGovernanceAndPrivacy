@@ -1,7 +1,12 @@
 """Data & Provenance — Nguyễn Quốc Hưng, 2A202603324.
 
-Starter loader: verify the original manifest and read T02 image metadata.
-TODO: add camera/light summaries, failure cases and an internal-label protocol.
+Loader + provenance guards for T02.
+
+`load_inputs` verifies the manifest and the images.csv schema, then returns both
+splits. `summarise_strata` reports the (camera, light) x split coverage the rest
+of the team needs before choosing a normalisation grouping — see
+reports/data_audit_t02.md and reports/HANDOFF_data_provenance.md.
+
 Never read instructor ground truth or rewrite fixture manifests to hide errors.
 """
 from __future__ import annotations
@@ -41,3 +46,40 @@ def load_inputs(ctx: RunContext) -> dict:
     if not images.split.isin(["dev", "eval"]).all():
         raise ValueError("T02 split must be dev or eval")
     return {"manifest": pd.read_csv(manifest) if manifest.exists() else None, "images": images}
+
+
+SCENE_SEP = "_"
+
+
+def scene_of(image_id: pd.Series) -> pd.Series:
+    """`img_07_2` -> `img_07`. The 4 variants of one scene share an original."""
+    return image_id.str.rsplit(SCENE_SEP, n=1).str[0]
+
+
+def summarise_strata(images: pd.DataFrame) -> pd.DataFrame:
+    """Images per (camera_id, light) x split.
+
+    Why this matters: thresholds may only be fitted on `dev`, so any stratum that
+    exists at eval but not at dev cannot get its own calibrated threshold. On the
+    shipped fixture that is `cam_A/night` — 0 dev, 8 eval, i.e. 20% of the eval
+    split. Normalising per (camera_id, light) therefore leaves a blind spot;
+    per `camera_id` alone is covered on both sides.
+    """
+    cross = pd.crosstab([images.camera_id, images.light], images.split)
+    for split in ("dev", "eval"):
+        if split not in cross.columns:
+            cross[split] = 0
+    return cross
+
+
+def uncalibratable_strata(images: pd.DataFrame) -> list[str]:
+    """Strata present at eval with no dev example. Empty list = safe to stratify."""
+    cross = summarise_strata(images)
+    gap = cross[(cross["eval"] > 0) & (cross["dev"] == 0)]
+    return sorted(f"{camera}/{light}" for camera, light in gap.index)
+
+
+def leaking_scenes(images: pd.DataFrame) -> list[str]:
+    """Original scenes appearing in both splits — near-duplicate leakage. Expected: []."""
+    per_scene = images.assign(scene=scene_of(images.image_id)).groupby("scene")["split"].nunique()
+    return sorted(per_scene[per_scene > 1].index)

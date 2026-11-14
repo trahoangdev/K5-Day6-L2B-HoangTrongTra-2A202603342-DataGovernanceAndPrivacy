@@ -1,0 +1,4 @@
+image_id,defect_type_A,severity_A,defect_type_B,severity_B
+img_08_2,compression,1,blur,1
+img_11_1,none,0,blur,0
+img_12_1,none,0,blur,0
