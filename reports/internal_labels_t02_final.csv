@@ -42,7 +42,7 @@ img_14_3,A,compression,1,1,pass1_only,
 img_18_0,A,blur,1,1,pass1_only,
 img_18_1,A,none,0,0,pass1+retest_agreed,
 img_18_2,A,glare,1,1,pass1_only,
-img_18_3,A,blur,1,1,pass1+retest_agreed,
+img_18_3,Codex (AI-assisted for Lead),blur,2,1,adjudicated,AI-assisted adjudication for Lead: severe global blur; object detail lost vs img_18_1 and img_18_0; see reports/adjudication_img_18_3.json
 img_20_0,A,none,0,0,pass1+retest_agreed,
 img_20_1,A,none,0,0,pass1_only,
 img_20_2,A,dark,1,1,pass1_only,
