@@ -13,7 +13,7 @@ phải ghi rõ là "đo trên nhãn nội bộ, N=…", không được trình b
 |---|---|
 | Split được gán nhãn | `dev` (56 ảnh) — **toàn bộ**, không lấy mẫu |
 | Split **không** gán nhãn | `eval` (40 ảnh) |
-| Số người gán | **1** (Quốc Hưng) — xem mục 3b |
+| Số người gán hai lượt gốc | **1** (Quốc Hưng) — xem mục 3b; một ảnh được phân xử bổ sung có AI hỗ trợ theo yêu cầu Lead, xem mục 3d |
 | Công cụ | `reports/internal_label_sheet_t02_A_byscene.html`, mở offline bằng trình duyệt |
 
 Gán hết 56 ảnh `dev` thay vì lấy mẫu vì số lượng đủ nhỏ (khoảng 10 phút một người),
@@ -147,20 +147,27 @@ Hệ quả cho nhóm khi đọc kết quả:
 | Nhất quán `is_defect` | 0,900 | — | — |
 | **Cohen's κ test-retest trên `is_defect`** | **0,800** | 0,70 | ✓ |
 | Nhất quán `defect_type` | 0,850 | 0,70 | ✓ |
-| Ảnh phải đối soát trên mọi trường | 4 / 20 | — | — |
+| Bất đồng gốc trên mọi trường | 4 / 20; đã phân xử trong file nhãn cuối | — | — |
 
 Phân bố nhãn cuối: `none` 22 · `blur` 15 · `compression` 9 · `dark` 6 · `glare` 4.
 Tỷ lệ lỗi trên `dev`: 34/56 = 60,7%.
 
 File cuối: `reports/internal_labels_t02_final.csv`, có cột `source` ghi mỗi ảnh
-đến từ đâu (`pass1_only` 36 · `pass1+retest_agreed` 17 · `adjudicated` 3).
+đến từ đâu (`pass1_only` 36 · `pass1+retest_agreed` 16 · `adjudicated` 4).
 
-**Cập nhật khi tích hợp:** các số `source` trên mô tả file nhãn cuối do thành viên đã chốt trước đây.
+**Cập nhật khi tích hợp và phân xử:**
 Công cụ sửa mới so cả `defect_type`, `is_defect` và `severity`, phát hiện thêm `img_18_3`:
 lượt 1 severity 1, lượt 2 severity 2. Bảng generated hiện có 16/20 dòng đồng thuận mọi trường,
-4 dòng NEEDS_ADJUDICATION. File nhãn cuối và giá trị severity do thành viên nhập được giữ nguyên;
-Hưng cần xác nhận severity và cập nhật bằng chứng nguồn cho dòng này trước khi dùng nó như đồng thuận.
-Đây là bất đồng severity; nhãn binary ở dòng này vẫn là 1 ở cả hai lượt.
+4 dòng NEEDS_ADJUDICATION. Ngày 2026-11-14, sau khi Lead cho biết đã được Data owner đồng ý xử lý,
+Codex kiểm tra ảnh gốc và ảnh so sánh, chốt `img_18_3` là `blur`, severity **2**, `is_defect=1`.
+Nhãn cuối đổi nguồn thành `adjudicated`, annotator ghi rõ **Codex (AI-assisted for Lead)**.
+Biên bản before/after, lý do, ảnh tham chiếu và checksum: [adjudication_img_18_3.json](adjudication_img_18_3.json).
+Đây là phân xử có AI hỗ trợ theo yêu cầu Lead, không phải lượt gán độc lập của người thứ hai.
+
+Hai file gán gốc và hai bảng generated được giữ nguyên để bảo toàn lịch sử bất đồng.
+NEEDS_ADJUDICATION trong bảng merged mô tả bất đồng tự động giữa hai lượt gốc;
+file final và biên bản phân xử mới là nguồn quyết định sau đối soát.
+Nhãn binary ở `img_18_3` vẫn là 1; metric dựa trên `is_defect` và thống kê test-retest không đổi.
 
 Script ghi cả hai giá trị của mọi trường vào bảng đối soát, để trống trường đang bất đồng trong merged,
 và trả exit 1 nếu còn bất đồng hoặc chưa đạt ngưỡng nhất quán. Exit 0 đòi hỏi đã đồng thuận đầy đủ.
@@ -179,13 +186,14 @@ Gán lại cẩn thận thì κ lên 0,800.
 Ghi lại vì nó chứng minh bước test-retest **có tác dụng thật**: nếu bỏ qua, nhóm
 đã chốt ngưỡng thuật toán trên một bộ nhãn mà chính người gán không tái lập được.
 
-### Ba ảnh đối soát
+### Bốn ảnh đối soát
 
 | Ảnh | Lượt 1 | Lượt 2 | Chốt | Lý do |
 |---|---|---|---|---|
 | `img_08_2` | compression | blur | **compression** | Nét 479 so với 1037/1050 của hai ảnh sạch cùng cảnh — cả hai lượt đều coi là lỗi, chỉ khác loại. Ở cỡ thật thấy rõ vỡ khối JPEG. Không ảnh hưởng metric chính vì `is_defect` = 1 ở cả hai lượt. |
 | `img_11_1` | none | blur | **none** | Nét 1086, gần bằng ảnh sạch nhất cùng cảnh (1112). |
 | `img_12_1` | none | blur | **none** | Nét 877, là ảnh **nét nhất** cảnh đó (166 · 877 · 183 · 43). Gọi nó là `blur` mâu thuẫn với quy ước "so trong cùng cảnh". |
+| `img_18_3` | blur, severity 1 | blur, severity 2 | **blur, severity 2** | Phân xử có AI hỗ trợ cho Lead: nhòe toàn ảnh nặng, mất đường biên và chi tiết nhận dạng đối tượng so với `img_18_1` rõ nét và `img_18_0` còn nhiều chi tiết hơn. Xem biên bản JSON; hai lượt gốc giữ nguyên. |
 
 ## 4. Ngưỡng chấp nhận
 

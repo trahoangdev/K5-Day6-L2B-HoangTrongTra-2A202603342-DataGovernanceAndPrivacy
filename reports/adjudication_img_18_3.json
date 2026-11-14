@@ -1,0 +1,64 @@
+{
+  "image_id": "img_18_3",
+  "date": "2026-11-14",
+  "timezone": "Asia/Bangkok",
+  "actor": "Codex (AI-assisted adjudication)",
+  "requested_by": "Hoàng Trọng Trà - 2A202603342",
+  "authorization": "Lead requested the correction after reporting permission from the Data owner; this is not a second independent human annotation.",
+  "protocol": "reports/internal_label_protocol.md, severity 2 = nặng (bỏ)",
+  "before": {
+    "image_id": "img_18_3",
+    "annotator": "A",
+    "defect_type": "blur",
+    "severity": "1",
+    "is_defect": "1",
+    "source": "pass1+retest_agreed",
+    "note": ""
+  },
+  "after": {
+    "image_id": "img_18_3",
+    "annotator": "Codex (AI-assisted for Lead)",
+    "defect_type": "blur",
+    "severity": "2",
+    "is_defect": "1",
+    "source": "adjudicated",
+    "note": "AI-assisted adjudication for Lead: severe global blur; object detail lost vs img_18_1 and img_18_0; see reports/adjudication_img_18_3.json"
+  },
+  "reason": "Visual comparison at native resolution: img_18_3 loses object contours and identifying details to severe global blur; img_18_1 is sharp and img_18_0 retains substantially more detail. This supports severity 2 under the internal rubric.",
+  "evidence": [
+    {
+      "image_id": "img_18_3",
+      "path": "fixtures/t02_raw_qc/images/img_18_3.jpg",
+      "sha256": "ea49758009cfa6270d187590ff30f251afb051d8cc663d2fbab24e604c78fcd3",
+      "laplacian_variance": 1.8189890384674072
+    },
+    {
+      "image_id": "img_18_1",
+      "path": "fixtures/t02_raw_qc/images/img_18_1.jpg",
+      "sha256": "5f016d2355f62e38da2088bd210a1ba660a99e9a67560386efdfaff969ed1909",
+      "laplacian_variance": 1906.7576904296875
+    },
+    {
+      "image_id": "img_18_0",
+      "path": "fixtures/t02_raw_qc/images/img_18_0.jpg",
+      "sha256": "10f08ff3f4b0ee7940758e7fc987ee8693d319201ee9a3ea4b2b30270b5cdac8",
+      "laplacian_variance": 360.9302062988281
+    },
+    {
+      "image_id": "img_09_2",
+      "path": "fixtures/t02_raw_qc/images/img_09_2.jpg",
+      "sha256": "2a5772302f6174fade53db916b62efd1dc658153841bdcf2202a5ee2149dc582",
+      "laplacian_variance": 1.6617363691329956
+    }
+  ],
+  "measurement_limit": "Laplacian variance is descriptive supporting evidence, not an automatic severity threshold or instructor ground truth.",
+  "raw_label_sha256": {
+    "reports/internal_labels_t02_A.csv": "9dc58a517a10bdc5167be9eccb701e561b11fe3b36a8afd23885713d451bcb6e",
+    "reports/internal_labels_t02_A_retest.csv": "1713cc31052a62784438548b6150358b78eb0a70968b52b61b55d302af4a53e5",
+    "reports/internal_labels_t02_merged.csv": "8ff6508fd032ec46d07063defe43fc0b2accd29e7d0cabad78ba52739a7b8dbb",
+    "reports/internal_labels_t02_disagreements.csv": "059b2df15324a273e19061b4121d93e7a47fcc966ffddfaa0c7781bb97bd4245"
+  },
+  "previous_final_sha256": "58cb3509a1fb50eeae6f5d4ca93159687794c826301e0379ebe282e220a3312f",
+  "final_sha256": "ef8d2747515cb047f9a0e405431c6607c1bab690b8204555f6936781c628a0c0",
+  "scope": "Only img_18_3 in final labels changed. Raw labels, raw disagreements, fixtures, scores, thresholds and test-retest statistics remain unchanged."
+}
