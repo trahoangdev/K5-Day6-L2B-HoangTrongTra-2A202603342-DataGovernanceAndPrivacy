@@ -1,4 +1,4 @@
-"""YOUR PoC PIPELINE — this is the file your group owns.
+"""Group-owned pipeline entry point; T02 integration is owned by the Lead.
 
 Lab contract = 5 automated steps, run by `python -m src.main ...`:
     01 load      input + provenance check (manifest.csv)
@@ -13,7 +13,8 @@ docs/tracks/TXX.md (also in src/metrics/tracks.py::TRACKS). Then evaluate with
 
 Rules: never read fixtures/*/gt/ here (the GT guard will stop you); seed everything via ctx.rng;
 no network calls; fail loudly on missing models instead of downloading.
-See src/examples/random_baseline.py for a minimal end-to-end wiring example.
+T02 stages are orchestrated in team06.integration, with decisions in team06.policy.
+See docs/T02_POLICY.md for action/review semantics and the handoff to scorers.
 """
 from __future__ import annotations
 
@@ -60,6 +61,12 @@ def process(ctx: RunContext, data: dict) -> pd.DataFrame:
 # ---------------------------------------------------------------- 03 rank
 def rank(ctx: RunContext, scored: pd.DataFrame) -> pd.DataFrame:
     """Default: top-B by `score`. Adapt id/score/reason columns to your track."""
+    if ctx.track == "t02":
+        from .team06.integration import make_queue
+
+        queue = make_queue(ctx, scored)
+        write_review_queue(queue, ctx.out("review_queue.csv"))
+        return queue
     budget = int(ctx.param("budget", 20))
     if "score" not in scored.columns:
         raise ValueError("rank(): process() output needs a numeric `score` column (higher = review first), "
@@ -76,10 +83,9 @@ def rank(ctx: RunContext, scored: pd.DataFrame) -> pd.DataFrame:
 
 # ---------------------------------------------------------------- 04 review
 def review(ctx: RunContext, scored: pd.DataFrame, queue: pd.DataFrame) -> pd.DataFrame:
-    """If a reviewed queue exists (out/review_queue_reviewed.csv), apply it. Otherwise pass through.
+    """T02 applies the Lead's reviewed actions; unreviewed mandatory items stay REVIEW.
 
-    TODO: decide what an `edit` / `reject` means for your track and apply it
-    (e.g. via common.review.apply_overrides), logging every change to ctx.audit.
+    Other tracks keep the starter hook for their own override semantics.
     """
     if ctx.track == "t02":
         from .team06.human_review import apply_human_review
@@ -104,11 +110,16 @@ def decide(ctx: RunContext, final: pd.DataFrame) -> Decision:
                     owner=ctx.config.get("owner", "TODO-owner"), scope=ctx.track)
 
 
-def run_pipeline(ctx: RunContext, scorer=process) -> None:
+def run_pipeline(ctx: RunContext, scorer=None) -> None:
     """Shared stages for Team 6 PoC and baseline; scorer(ctx, data) returns a scored table."""
+    if ctx.track == "t02":
+        from .team06.integration import run_t02
+
+        run_t02(ctx, process if scorer is None else scorer)
+        return
     spec = get_track(ctx.track)
     data = load(ctx)
-    scored = scorer(ctx, data)
+    scored = (process if scorer is None else scorer)(ctx, data)
     ctx.stats["n_items"] = len(scored)
     queue = rank(ctx, scored)
     final = review(ctx, scored, queue)

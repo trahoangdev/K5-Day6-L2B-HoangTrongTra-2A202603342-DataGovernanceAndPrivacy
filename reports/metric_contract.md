@@ -5,6 +5,8 @@
 
 **Team 6 · bản nháp protocol:** track, pool, budget và seed đã xác định theo đề T02.
 Ngưỡng, trọng số, cách báo CI và thời điểm freeze còn chờ nhóm chốt; đây chưa phải cam kết freeze thuật toán.
+Policy hành động của Lead đã định nghĩa theo `t02-lead-v1` (2026-11-14), xem `docs/T02_POLICY.md`;
+policy không đặt ngưỡng score mới, không dùng GT và không thay đổi score khi reviewer sửa hành động.
 
 | Mục | Khai báo của nhóm |
 |---|---|
@@ -15,7 +17,7 @@ Ngưỡng, trọng số, cách báo CI và thời điểm freeze còn chờ nhó
 | Công thức + numerator / denominator | Recall: ảnh lỗi thật trong top-B / tổng ảnh lỗi thật trên eval; Precision: ảnh lỗi thật trong top-B / số ảnh được chọn (20 nếu đủ) |
 | Cách ghép prediction ↔ GT (IoU? id? tolerance?) | image_id; evaluator lọc eval rồi sort score giảm dần |
 | Candidate pool cố định | fixtures/t02_raw_qc: 96 ảnh; 56 dev / 40 eval; giữ split gốc |
-| Review budget B / K | B=20; pool queue review thực tế cần khai báo riêng |
+| Review budget B / K | B=20; queue mặc định review_split=all (96 ảnh); metric top-20 sau lọc eval là pool riêng |
 | Seed | 42 |
 | Threshold policy (chọn trên dev như thế nào) | Chỉ chọn trên dev; phương pháp và giá trị ngưỡng/trọng số chưa chốt |
 | Eval split (không dùng để tune) | eval; GT chính thức do giảng viên giữ |
