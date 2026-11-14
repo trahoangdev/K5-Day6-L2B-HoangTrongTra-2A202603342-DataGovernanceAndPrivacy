@@ -9,6 +9,7 @@ import pytest
 from src.common.context import RunContext
 from src.common.io import resolve_config
 from src.main import main
+from src.team06 import baseline
 from src.team06.data import load_inputs
 
 
@@ -35,10 +36,15 @@ def test_team06_rejects_tampered_metadata(tmp_path):
         load_inputs(_ctx(copied, tmp_path / "out"))
 
 
-def test_team06_baseline_stub_reports_its_owner(tmp_path, capsys):
+def test_team06_baseline_uses_shared_integration(tmp_path, monkeypatch):
+    # Test-only scored data verifies wiring without implementing Dương's baseline.
+    def fixture_scores(ctx, data):
+        return data["images"][["image_id"]].assign(score=np.arange(len(data["images"]), dtype=float), pred_action="KEEP")
+    monkeypatch.setattr(baseline, "score_baseline", fixture_scores)
     status = main(["--track", "t02", "--pipeline", "src.team06.baseline", "--output", str(tmp_path), "--offline"])
-    assert status == 3
-    assert "Phạm Văn Dương" in capsys.readouterr().err
+    assert status == 0
     info = json.loads((tmp_path / "run_info.json").read_text(encoding="utf-8"))
-    assert info["status"] == 3 and info["seed"] == 42
-    assert not (tmp_path / "ranked_review.csv").exists()
+    assert info["status"] == 0 and info["seed"] == 42
+    assert info["stats"]["n_items"] == 96
+    assert info["stats"]["decision_status"] == "HOLD"
+    assert (tmp_path / "ranked_review.csv").exists()

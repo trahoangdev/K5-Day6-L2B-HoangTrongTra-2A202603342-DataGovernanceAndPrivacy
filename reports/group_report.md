@@ -79,10 +79,11 @@
 
 ## 07 · Human & decision
 
-- Review queue (file, B, cách ưu tiên): ____
-- Cách override + audit log (`out/audit_log.jsonl`): ____
-- Decision policy + `reason_code` + owner: ____
-- Khi nào HOLD/REWORK thay vì tự động release: ____
+- Review queue: `review_queue.csv`, B=20 trong `review_split` đã khai báo (mặc định all); sort score giảm dần, hòa điểm theo image_id. Top-B bắt buộc review; không đồng nhất queue toàn input với top-B trên eval của metric.
+- Override + audit: reviewer CSV bắt buộc reviewer/note; approve chấp thuận đề xuất cụ thể, reject loại ảnh, edit chọn KEEP/RECAPTURE, skip/escalate giữ REVIEW. Lưu raw/final riêng, không sửa score; audit JSONL append-only ghi actor/before/after/reason. Binding input/config/scoring giúp chặn review cũ trong cùng output directory.
+- Policy `t02-lead-v1`: `docs/T02_POLICY.md`; owner Hoàng Trọng Trà – 2A202603342. Quyết định gồm reason_code, evidence và counts; chưa có kết quả metric chính thức để tuyên bố chất lượng model.
+- HOLD khi còn review/skip/escalation hoặc thiếu provenance/offline/evidence; REWORK khi đã xử lý review nhưng còn RECAPTURE; GO khi mọi review bắt buộc đã xử lý và mọi ảnh KEEP. Run lỗi ghi HOLD/RUN_FAILED và vô hiệu hóa output thành công cũ.
+- Bằng chứng reviewer thực tế, đánh giá usability và demo do Tuấn Minh bổ sung: **chưa thực hiện**. Test Lead chỉ dùng scorer/reviewer synthetic, không thay bằng chứng review thật.
 
 ## 08 · Reproduce & tests
 

@@ -16,3 +16,5 @@ strict_provenance: true           # fail if manifest.csv hashes do not match
 params:
   budget: 20
   dev_split: dev
+  review_split: all                 # evaluator separately filters eval before top-B
+  policy_version: t02-lead-v1
