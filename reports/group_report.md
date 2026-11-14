@@ -1,137 +1,188 @@
-# Group Report — Day 06 Data Lab (Field-to-Release PoC)
+# Team 6 · T02 Raw QC Triage
 
-> Điền đầy đủ, cụ thể, không viết chung chung. Mọi con số phải lấy từ file do script sinh ra
-> (`reports/metrics_*.json`, `reports/table1_baseline_vs_poc.md`) — không gõ tay, không làm tròn mất đơn vị.
-> 3–5 trang (hoặc README + report.md tương đương).
+Hoàng Trọng Trà – 2A202603342 chịu trách nhiệm tích hợp và tiếp quản phần việc còn lại theo yêu cầu trong chat.
+Repo: https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy.
+Đối chiếu BTC main `b0ce8bf`. Hồ sơ hiện tại cho thấy pipeline hoạt động, **chưa chứng minh chất lượng heldout**.
+Freeze ghi nhận 2026-11-14T14:24:33+00:00, base `ff579c6`. Chưa có bằng chứng mốc phút 30/180 hoặc deadline +24h.
+Không đặt tag lịch sử `demo-180m`/`final-24h` để giả lập thời hạn. Deadline lớp chưa được cung cấp.
 
-## 00 · Header
+## 1. Vấn đề và đầu ra
 
-| Mục | Giá trị |
-|---|---|
-| Group ID | G06 · Team 6 |
-| Challenge | T02 · Raw QC Triage |
-| Thành viên (6) + vai trò | Hoàng Trọng Trà – 2A202603342 (Lead / Integrator); Nguyễn Quốc Hưng – 2A202603324 (Data & Provenance); Phạm Văn Dương – 2A202603332 (Baseline & Research); Nguyễn Nhật Hạ – 2A202603325 (Core Algorithm / PoC); Lê Trần Phi Hùng – 2A202603353 (QA & Evaluation); Nguyễn Tuấn Minh – 2A202603349 (Human Review & Demo) |
-| Git URL | https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy |
-| Tag `demo-180m` (commit) | ____ |
-| Tag `final-24h` (commit) | ____ |
-| Deadline (giờ VN) | ____ |
+Người kiểm dữ liệu chỉ có budget B=20 để tìm ảnh cần chụp lại trước khi dùng downstream.
+Bỏ sót blur, thiếu sáng hoặc lóa có thể làm dữ liệu không hữu ích; báo nhầm ảnh đêm làm mất dữ liệu hữu ích và tốn công thu thập.
+Đầu vào là ảnh cùng metadata camera/light/split và manifest. Đầu ra gồm ranking, queue, action từng ảnh,
+contact sheet offline, override/audit và quyết định có owner/reason.
 
-## 01 · Problem statement
-
-- Ai bị ảnh hưởng / ai chịu hậu quả khi hệ thống sai? ____
-- Điểm nghẽn cụ thể: ____
-- Đầu vào → đầu ra: ____
-- Tiêu chí GO / HOLD / REWORK (chốt trước khi chạy eval): ____
-- Giả định của nhóm (cần DPO/legal/domain owner xác nhận): ____
-
-## 02 · Data & provenance
-
-| Split | N | Nguồn / link | License | Synthetic? |
-|---|---|---|---|---|
-| dev | | | | |
-| eval / heldout | | | | |
-
-- Schema & class mapping: ____
-- Seed: 42 · Cách chia split (theo scene/group/segment?): ____
-- `manifest.csv` verified (sha256): có / không — lệnh: `python -m tools.verify_manifests`
-- Dữ liệu thật dùng (nếu có) và cách xây GT cho nó: ____
-
-## 03 · Research & design
-
-- 2–3 references (URL + ngày xem) và **vì sao** chọn kỹ thuật: ____
-- Sơ đồ data flow (input → process → rank/QC → review → decision → report): ____
-- Thành phần offline (model/weights + checksum + license nếu có): ____
-- Trade-offs đã cân nhắc: ____
-
-## 04 · Baseline vs PoC
-
-- Baseline (mô tả, version/config, commit): ____
-- PoC (mô tả, version/config, commit): ____
-- Cùng budget / cùng heldout / cùng seed: xác nhận ____
-
-**Bảng 1 · Baseline vs PoC & hard slices** — dán output của
-`python -m src.compare reports/metrics_baseline.json reports/metrics_poc.json`:
-
-| Metric (unit) | Baseline | PoC | Δ & chú thích |
-|---|---|---|---|
-| Primary: ______ | ____ | ____ | ____; higher/lower? |
-| Hard-slice: ______ | ____ | ____ | ____; N=__ |
-| Review@B / miss / FP | ____ | ____ | ____; B=__ |
-| Runtime / 100 items | ____ | ____ | ____; CPU=__ |
-
-## 05 · Evaluation protocol
-
-- Công thức primary metric, đơn vị đánh giá, TP/FP/FN, denominator: ____ (xem `reports/metric_contract.md`)
-- Threshold / budget B / K và lúc chốt: ____
-- Độ bất định (CI/bootstrap/variance) khi N nhỏ: ____
-- Lệnh evaluate chính xác: `python -m src.evaluate --track t__ --pred ... --out ...`
-
-## 06 · Result slices
-
-| Slice | N | Baseline | PoC | Ghi chú |
-|---|---|---|---|---|
-| | | | | |
-| | | | | |
-
-- Failure case 1 (ảnh/metadata + root cause): ____
-- Failure case 2: ____
-- Latency / compute (máy, CPU, ms/item): ____
-
-## 07 · Human & decision
-
-- Review queue: `review_queue.csv`, B=20 trong `review_split` đã khai báo (mặc định all); sort score giảm dần, hòa điểm theo image_id. Top-B bắt buộc review; không đồng nhất queue toàn input với top-B trên eval của metric.
-- Override + audit: reviewer CSV bắt buộc reviewer/note; approve chấp thuận đề xuất cụ thể, reject loại ảnh, edit chọn KEEP/RECAPTURE, skip/escalate giữ REVIEW. Lưu raw/final riêng, không sửa score; audit JSONL append-only ghi actor/before/after/reason. Binding input/config/scoring giúp chặn review cũ trong cùng output directory.
-- Policy `t02-lead-v1`: `docs/T02_POLICY.md`; owner Hoàng Trọng Trà – 2A202603342. Quyết định gồm reason_code, evidence và counts; chưa có kết quả metric chính thức để tuyên bố chất lượng model.
-- HOLD khi còn review/skip/escalation hoặc thiếu provenance/offline/evidence; REWORK khi đã xử lý review nhưng còn RECAPTURE; GO khi mọi review bắt buộc đã xử lý và mọi ảnh KEEP. Run lỗi ghi HOLD/RUN_FAILED và vô hiệu hóa output thành công cũ.
-- Bằng chứng reviewer thực tế, đánh giá usability và demo do Tuấn Minh bổ sung: **chưa thực hiện**. Test Lead chỉ dùng scorer/reviewer synthetic, không thay bằng chứng review thật.
-
-## 08 · Reproduce & tests
-
-```bash
-make setup          # hoặc: python -m venv .venv && pip install -r requirements.txt
-python -m src.main --input fixtures/<track> --config configs/lab.yaml --output out/ --offline --seed 42
-python -m src.evaluate --track t__ --pred out/<file> --out reports/metrics_poc.json
-pytest -q
+```mermaid
+flowchart LR
+  A[Input + manifest] --> B[Verify + load]
+  B --> C[Laplacian baseline / multi-feature PoC]
+  C --> D[Rank + top-B]
+  D --> E[Human review + override]
+  E --> F[Image actions + run decision]
+  F --> G[Audit + metrics report]
 ```
 
-- Output của `pytest -q`: **118 passed, 39 skipped, 16 failed in 19.03s**.
-- Team 6 QA tests: **73 passed in 9.77s** with:
-  `.\.venv\Scripts\python.exe -m pytest tests/test_team06.py tests/test_team06_scoring.py tests/test_team06_integration.py -q -o addopts=""`
-- Máy / CPU / OS / Python: Intel Core i5-8265U @ 1.60 GHz · Windows 10.0.19045 · Python 3.12.10 · git sha `081fae2c7dc64827b5056284872940f167ba935e`.
-- Full-suite blocker: **16 failures** đều do checksum fixture; `14/14` manifest không khớp. T02: `fixtures/t02_raw_qc/images.csv` expected `26a54d9de362b92139554efec64a2710586a8c2d58a23fd02f8c4ff4c93bd7c7`, actual `4b2b5bb9e79fc2bdd034fcf0df9ff77a9b00922bb016bcfb624c3226ca888451`.
+Policy `t02-lead-v1` ưu tiên HOLD khi còn review hoặc thiếu provenance/offline; REWORK khi đã giải quyết review nhưng còn RECAPTURE;
+GO khi tất cả ảnh KEEP và review bắt buộc đã có bằng chứng. GO chỉ mô tả triage của batch, không phải chứng nhận chất lượng hay tuân thủ pháp lý.
 
-## 09 · Limitations & ethics
+## 2. Dữ liệu và provenance
 
-- Rủi ro pháp lý / PII / license: ____
-- Điều chưa biết; false alarms; nếu scale 10× thì sao: ____
-- Không tuyên bố "đạt GDPR / luật Việt Nam" từ checklist tự động; giả định cần DPO/legal xác nhận: ____
-- Kế hoạch cải tiến: ____
+Fixture synthetic CC0-1.0 do BTC cung cấp: 96 ảnh, 56 dev và 40 eval, 24 scene gốc, bốn biến thể mỗi scene.
+Split theo scene không rò scene giữa dev/eval. Schema `image_id,path,camera_id,light,split`; nhãn nội bộ thêm
+`defect_type,severity,is_defect,annotator,source,note`. Mapping lỗi: blur/glare/dark/compression=1, none=0.
+Manifest hash kiểm trên byte gốc, `.gitattributes` giữ fixture verbatim để tránh LF/CRLF làm sai checksum.
+Toàn bộ 14 manifest fixture PASS; log còn gồm các manifest dữ liệu thật cục bộ, số lượng có thể khác khi clone sạch.
 
-## 10 · Team contribution
+Nhãn nội bộ cuối chỉ gồm 56 dev, 34 ảnh lỗi, 22 ảnh none.
+Hưng thực hiện một lượt và test-retest có hỗ trợ tiền gán nhãn AI, không phải hai annotator độc lập.
+Agreement binary .900, kappa .800, type agreement .850 trên 20 retest là số liệu lịch sử của Data;
+4 bất đồng đã adjudicate, giữ nguyên raw/retest/disagreement. img_18_3 có hồ sơ adjudication riêng, ghi actor AI-assisted,
+không suy diễn thành review độc lập. Nhãn chịu thiên lệch cùng đặc trưng blur nên kết quả dev có thể lạc quan.
+Không có GT eval chính thức trong student repo, không tạo hoặc suy luận GT cho 40 eval để tune.
 
-**Bảng 2 · Individual contribution evidence** (đối chiếu với `git shortlog -sne --all` và `reports/team_contributions.csv`)
+## 3. Phương pháp và protocol
 
-| Học viên | Git author/email | Module / vai trò | Commit SHA / diff chứng minh | Trình bày? |
-|---|---|---|---|---|
-| Hoàng Trọng Trà – 2A202603342 | Chờ xác nhận | Lead / Integrator | Chưa ghi nhận | Chờ phân công |
-| Nguyễn Quốc Hưng – 2A202603324 | Chờ xác nhận | Data & Provenance | Chưa ghi nhận | Chờ phân công |
-| Phạm Văn Dương – 2A202603332 | Chờ xác nhận | Baseline & Research | Chưa ghi nhận | Chờ phân công |
-| Nguyễn Nhật Hạ – 2A202603325 | Chờ xác nhận | Core Algorithm / PoC | Chưa ghi nhận | Chờ phân công |
-| Lê Trần Phi Hùng – 2A202603353 | Chờ xác nhận | QA & Evaluation | `tests/test_team06.py`, `tests/test_team06_scoring.py`, `tests/test_team06_integration.py`; kiểm tra success/failure, provenance, schema, seed 42, offline, dev-only calibration, review/policy contract và baseline/PoC | 73 targeted tests passed; full suite còn 16 lỗi checksum fixture |
-| Nguyễn Tuấn Minh – 2A202603349 | Chờ xác nhận | Human Review & Demo | Chưa ghi nhận | Chờ phân công |
+Baseline của Dương dùng variance Laplacian toàn ảnh, score âm để ảnh mờ xếp trước; action threshold 186.855.
+Giữ giá trị đã triển khai, chưa có log grid-search để chứng minh tối ưu. Ngưỡng 777 trong ghi chú Data chỉ là minh họa tách nhãn sau quan sát,
+khác ngưỡng triển khai và khác Recall@20.
 
-## 11 · References
+PoC của Hạ kết hợp sharpness tile 4×4, p95/dark fraction, vùng sáng bão hòa sau erosion và tỉ lệ gradient biên JPEG 8×8.
+Chuẩn camera/global học từ dev; so sánh session theo batch không dùng nhãn. Đây là phương pháp phụ thuộc thành phần batch,
+không nên diễn giải là bộ phân loại từng ảnh độc lập. Với camera lạ/singleton, dùng fallback dev.
+Weighted score cộng agreement bonus, higher nghĩa đáng ngờ hơn; score không giới hạn ở 1.
+KEEP dưới .20, REVIEW từ .20 đến dưới .60, RECAPTURE từ .60.
+Mọi tham số nằm trong `configs/submission.yaml`, SHA-256 ở `configs/protocol_freeze.json`; script từ chối nếu đầu vào freeze bị đổi.
 
-| URL | Ngày xem | 1–2 dòng ý nghĩa (không chép nguyên văn) |
-|---|---|---|
-| | | |
+Baseline/PoC dùng cùng pool, seed42, B=20, cấu hình policy và evaluator nguyên gốc.
+Metric join theo image_id, lọc split trước top-B. Queue demo top-20 toàn bộ 96 khác top-20 dev hoặc eval.
+Baseline threshold chỉ tác động action, ranking vẫn dùng score liên tục.
+Không có weights/model cần tải lúc chạy. Thay đổi thuật toán sau báo cáo cần freeze mới và không được chọn theo eval.
 
----
+## 4. Kết quả nội bộ và failure cases
 
-**Bảng 3 · Checklist chốt khi nộp**
+**Chỉ đánh giá dev in-sample, nhãn AI-assisted. Không phải điểm BTC hay heldout.**
+Số liệu dưới đây do `src.evaluate --split dev --budget 20` và `src.compare` sinh nguyên bản.
+Ghi chú `eval N` của evaluator dùng tên chung, split thực tế ở JSON là dev.
 
-- [ ] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật.
-- [ ] Đúng 1 lệnh run, 1 lệnh evaluate, 1 lệnh tests; không cần download khi chạy.
-- [ ] Có baseline/PoC metrics, ≥1 failure case, reviewer evidence, decision log.
-- [ ] Có license/source provenance, data splits, seed, offline environment, GT/eval N.
-- [ ] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên.
+Baseline: `baseline_internal_dev` (git b1a2105, seed 42) · PoC: `poc_internal_dev` (git b1a2105, seed 42)
+
+| Metric (unit) | Slice | Baseline | PoC | Δ abs | Δ rel | Better | N |
+|---|---|---|---|---|---|---|---|
+| **Defect Recall@B** (GT defects in top-B / GT defects) | all | 0.5882 | 0.5882 | 0.0000 | +0.0% | higher | 56 |
+| Precision@B (GT defects in top-B / B) | all | 1.0000 | 1.0000 | 0.0000 | +0.0% | higher | 56 |
+| Defect-type accuracy (GT defects) (fraction) | all | 0.2647 | 0.9412 | 0.6765 | +255.6% | higher | 34 |
+| False alarm in top-B (clean images in top-B / clean images) | light=day | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 36 |
+| False alarm in top-B (clean images in top-B / clean images) | light=dusk | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 16 |
+| False alarm in top-B (clean images in top-B / clean images) | light=night | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 4 |
+| Runtime / 100 items (s) | all | 0.3657 | 0.8172 | | | lower | |
+
+
+Cả hai chạm trần Recall@20 khả thi trên dev này: 20/34 vì số lỗi thật lớn hơn budget.
+Không có cải thiện primary metric. Type accuracy cao hơn chỉ là secondary trên cùng nhãn dev.
+PoC đổi ưu tiên từ blur sang glare/dark, không thể suy ra tốt hơn mọi camera hoặc mọi use case.
+Các hit dưới đây dùng cùng top-20 dev toàn cục; N là số ảnh slice, lỗi thật là denominator recall.
+
+| Slice | N | Lỗi thật | Hit Baseline | Hit PoC |
+|---|---:|---:|---:|---:|
+| light=day | 36 | 21 | 14 | 14 |
+| light=dusk | 16 | 10 | 5 | 5 |
+| light=night | 4 | 3 | 1 | 1 |
+| camera_id=cam_A | 36 | 19 | 8 | 12 |
+| camera_id=cam_B | 20 | 15 | 12 | 8 |
+| defect_type=blur | 15 | 15 | 13 | 7 |
+| defect_type=compression | 9 | 9 | 2 | 3 |
+| defect_type=dark | 6 | 6 | 5 | 6 |
+| defect_type=glare | 4 | 4 | 0 | 4 |
+| defect_type=none | 22 | 0 | 0 | 0 |
+
+Failure 1: `img_20_3` glare vẫn có nhiều cạnh nên global Laplacian không đưa vào top-20 dev;
+PoC ưu tiên glare tốt hơn ở slice này. Xem `reports/images/hard_1_glare.png` và raw predictions.
+Failure 2: `img_18_3` blur nặng được Baseline chọn nhưng PoC score 1.0 bị các ảnh nhiều cue đẩy ra khỏi top-20 dev.
+Đây là lỗi phân bổ budget/ranking, không chỉ lỗi nhận dạng loại defect. `img_22_1` blur nội bộ còn có PoC score 0,
+minh họa độ nhạy của nhãn nhẹ và session reference. Không chỉnh ngưỡng sau khi thấy các lỗi này.
+Failure 3 theo handout: chưa chứng minh camera B mềm hơn có hệ thống. Trung vị trộn corruption gây kết luận sai;
+Data đã đính chính bằng ảnh sạch theo scene, tránh dựng failure không có bằng chứng.
+
+Wilson 95% mô tả Recall: 0.4222–0.7363;
+Precision: 0.8389–1.0000.
+Tương quan frame, chọn top-B và tune dev vi phạm giả định độc lập; các khoảng này không chứng minh tổng quát hóa hoặc chênh lệch có ý nghĩa.
+Runtime đo một lần, gồm load/provenance/features/HTML/audit, không gồm startup process; không phải benchmark tối ưu.
+Máy: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel, Windows-11-10.0.26200-SP0, Python 3.12.14, code `b1a2105`.
+
+## 5. Human review và quyết định
+
+Trà đã xác nhận trong chat: “Tôi đã xem và chấp thuận RECAPTURE cả 20 ảnh”.
+`reports/review_queue.csv` giữ reviewer, timestamp và lý do riêng từng ảnh; `review_confirmation.json` ghi nguyên văn phạm vi xác nhận.
+AI đưa đề xuất thị giác trước, Trà chấp thuận sau khi xem. Không coi đây là đánh giá mù hoặc annotator thứ hai.
+Pipeline áp approve trên đề xuất RECAPTURE, không sửa score, metadata hay thứ hạng.
+`audit_log.jsonl` ghi trước/sau, actor và binding; CSV review cũ sai context bị chặn.
+
+Trước review: 0 reviewed, 25 pending, HOLD.
+Sau review: 20 reviewed, 40 KEEP, 51 RECAPTURE,
+5 pending, quyết định **HOLD / REVIEW_PENDING**.
+Pending ngoài budget: img_15_0, img_09_0, img_16_3, img_08_2, img_19_2. Không tự tăng B để đổi HOLD thành GO.
+Muốn xử lý tiếp cần protocol/run review bổ sung hoặc thu thập lại, tách khỏi phép chấm B=20.
+GO/REWORK/HOLD đều có test; không dùng test synthetic như review evidence thật.
+
+## 6. Kiểm tra OOD, reliability và tái lập
+
+Theo plan freeze, dùng sampler BTC tải 10 ảnh BDD100K từ mirror `dgural/bdd100k`, seed42, max-side640.
+Sampler ưu tiên rare/fog nên cả 10 ảnh đều foggy: {"daytime": 5, "night": 4, "dawn/dusk": 1}.
+Đây là smoke test OOD có chủ đích, không đại diện phân phối thật. 56 ảnh dev giữ nguyên làm reference,
+camera/session BDD chưa biết nên mỗi ảnh là singleton với fallback dev, không gộp session giả.
+Run offline trả đủ 10 score hữu hạn, khoảng 1.050000–2.200744;
+đề xuất {"RECAPTURE": 10}, loại {"glare": 8, "dark": 2}.
+Không có QC GT nên không biết bao nhiêu báo nhầm. Toàn bộ bị RECAPTURE cho thấy cần human calibration/domain review,
+không chứng minh model phát hiện đúng lỗi. Resize/JPEG chất lượng90 có thể đổi blockiness; không tune sau kiểm tra.
+Ảnh/contact sheet thật ở `data/real/` gitignored; chỉ metadata/score/hash được đưa vào report.
+Nguồn mirror và điều kiện research/education được ghi theo prep BTC; cần kiểm lại quyền sử dụng ngoài bài lab.
+
+Kiểm tra hiện tại: **140 passed, 39 skipped, 0 failed**, preflight exit0, manifest exit0.
+39 skip do bài chấm cần GT overlay giảng viên. Log ở `reports/submission/tests.txt`, `preflight.txt`, `manifests.txt`.
+QA lịch sử của Hùng trên Windows từng có 16 lỗi checksum, 118 pass và 39 skip tại 081fae2;
+đây là bằng chứng môi trường cũ, không xóa lịch sử hoặc coi là lỗi test hiện tại. Checkout giữ byte LF đã khắc phục.
+
+```powershell
+# Sau khi cài requirements.txt vào .venv (bước chuẩn bị, có thể cần mạng):
+.venv/Scripts/python.exe -m tools.prepare_submission --replay-confirmed-review
+.venv/Scripts/python.exe -m src.evaluate --track t02 --config configs/submission.yaml --gt reports/submission/internal_dev_labels_joined.csv --pred out/submission/poc/ranked_review.csv --split dev --budget 20
+.venv/Scripts/python.exe -m pytest -q
+# Khi giảng viên có GT: thay --gt bằng fixture GT, --split eval; không tune trên kết quả.
+# OOD chỉ sau prep online, ảnh thật giữ local:
+.venv/Scripts/python.exe -m tools.check_t02_ood
+```
+
+## 7. Giới hạn và đóng góp
+
+Synthetic nhỏ, dev có bias tiền gán nhãn, night dev ít, cam_A/night không có dev để chuẩn theo camera×light.
+Chưa có official GT/hidden eval, kiểm thử độc lập, đo usability hoặc run chứng minh thời hạn.
+Khi tăng dữ liệu 10× cần đo lại CPU/memory/contact-sheet size và công suất reviewer, không ngoại suy từ một timing.
+Ảnh thật có thể có người/biển số; không xuất pixel ra cloud/repo. Không tuyên bố đạt GDPR hay luật Việt Nam từ policy tự động.
+Domain owner cần xác nhận mức hữu ích của ảnh và tiêu chí recapture; quyền chia sẻ/retention cần bên sở hữu dữ liệu xác nhận.
+
+| Thành viên | Git author / email thực tế | Công việc | Commit chứng minh |
+|---|---|---|---|
+| Hoàng Trọng Trà – 2A202603342 | Hoang Trong Tra trahoangdev@gmail.com | Lead / Integrator; tiếp quản phần còn lại | 52b3cf1 |
+| Nguyễn Quốc Hưng – 2A202603324 | Soraxolo sora.12082004@gmail.com | Data & Provenance | bd0850f |
+| Phạm Văn Dương – 2A202603332 | pvd2201 pvd2201@gmail.com | Baseline & Research | 684924a |
+| Nguyễn Nhật Hạ – 2A202603325 | Nguyen Ha hgnguyen47347714@gmail.com | Core Algorithm / PoC | e75920f |
+| Lê Trần Phi Hùng – 2A202603353 | LTPhiHung phihung15032001@gmail.com | QA & Evaluation | 081fae2 |
+| Nguyễn Tuấn Minh – 2A202603349 | Chưa có  | Human Review & Demo (phân công ban đầu) | Chưa có |
+
+User đã giao Trà làm toàn bộ phần còn lại. Giữ nguyên ghi nhận đóng góp trước đó, không tạo commit giả cho Minh.
+Yêu cầu BTC mỗi người có commit thực chất **chưa đủ cho người thứ sáu**; Trà tiếp quản không tự thay thế điều kiện cá nhân này.
+AI hỗ trợ code công cụ hồ sơ, phân tích và soạn report/demo; mọi review được ghi đúng actor.
+
+## 8. References và trạng thái nộp
+
+Nguồn truy cập 2026-11-14:
+
+- [BTC T02](https://github.com/VinUni-AI20k/K5-Day6-L2-DataGovernanceAndPrivacy/blob/main/docs/tracks/T02.md): metric, budget, baseline và failure analysis.
+- [OpenCV Laplace Operator](https://docs.opencv.org/4.13.0/d5/db5/tutorial_laplace_operator.html): cơ sở đạo hàm bậc hai để đo chi tiết; code nhóm dùng SciPy, không sao chép demo C++.
+- [SciPy binary_erosion](https://docs.scipy.org/doc/scipy/reference/generated/scipy.ndimage.binary_erosion.html): giải thích erosion của mask; việc phân biệt đèn/lóa là heuristic riêng cần kiểm chứng.
+- [BDD prep BTC](../tools/download_real_samples.py) và [mirror](https://huggingface.co/datasets/dgural/bdd100k): sampler/provenance của OOD, không phải QC GT.
+
+Đã có pipeline, metric contract, bảng sinh script, slice/CI, review thật, audit, test, OOD và source demo.
+Còn giới hạn nộp: official score do giảng viên chấm, bằng chứng commit thành viên thứ sáu,
+tag/thời hạn lịch sử chưa xác minh và batch hiện tại vẫn HOLD. Không báo các mục này là hoàn tất.

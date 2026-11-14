@@ -1,0 +1,31 @@
+{
+  "confirmed_by": "Hoàng Trọng Trà - 2A202603342",
+  "recorded_at_utc": "2026-11-14T14:29:59+00:00",
+  "channel": "User response in Codex chat",
+  "statement": "Tôi đã xem và chấp thuận RECAPTURE cả 20 ảnh",
+  "scope": "20 item_ids in the bound PoC top-B queue only",
+  "item_ids": [
+    "img_15_3",
+    "img_07_2",
+    "img_12_3",
+    "img_17_3",
+    "img_23_3",
+    "img_21_3",
+    "img_20_2",
+    "img_18_2",
+    "img_10_3",
+    "img_01_2",
+    "img_12_2",
+    "img_06_2",
+    "img_02_3",
+    "img_00_2",
+    "img_03_3",
+    "img_06_3",
+    "img_08_3",
+    "img_03_2",
+    "img_09_3",
+    "img_17_2"
+  ],
+  "assistance": "AI visual proposals disclosed; human confirmation received before recording reviewer decisions",
+  "not_covered": "5 uncertain images outside top-B; no claim of independent double annotation or model accuracy"
+}

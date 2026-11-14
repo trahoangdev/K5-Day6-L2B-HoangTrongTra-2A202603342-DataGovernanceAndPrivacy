@@ -44,9 +44,9 @@ Dùng đúng từ vựng của schema giảng viên (`gt/labels.csv`) để số
 trung vị 1578, cao hơn ảnh ngày (944). Ảnh tối nhưng vẫn nhìn rõ nội dung thì gán `none`.
 Chỉ gán `dark` khi nội dung thực sự không đọc được.
 
-**`cam_B` mềm hơn `cam_A` theo hệ thống**, độ nét trung vị 236 so với 944 ở ảnh ban ngày.
-Đó là đặc tính quang học, không phải lỗi. Khi gán nhãn `cam_B` phải so với ảnh `cam_B`
-khác, không so với `cam_A`.
+**Đính chính cam_B:** trung vị toàn bộ ảnh trộn cả corruption không chứng minh khác biệt quang học.
+Hưng đã đối chiếu ảnh sạch theo scene: cam_B 1418, cam_A 1121 (HANDOFF_data_provenance.md).
+Chưa có bằng chứng cam_B mềm hơn có hệ thống; khi review vẫn đối chiếu cùng điều kiện và scene.
 
 Hai quy ước này ứng với failure mode số 1 và số 3 mà handout bắt phải phân tích.
 
@@ -225,3 +225,6 @@ thay thế bảng trên, vì nó mạnh hơn.
 - Bảng phân loại là của nhóm suy ra từ handout, chưa chắc khớp cách giảng viên gán.
   Sai lệch hệ thống ở đây sẽ không lộ ra cho tới khi chấm bằng `gt/` thật.
 - Nhãn nội bộ dùng để **chốt ngưỡng và bắt lỗi logic**, không dùng để tuyên bố thành tích.
+
+
+Đối chiếu hồ sơ nộp: ngưỡng 777 phía trên chỉ minh họa sự tách nhãn sau quan sát, không phải ngưỡng Baseline đã triển khai (186.855) hay Defect Recall@20. Xem metric_contract.md và bảng sinh bằng script.

@@ -1,5 +1,11 @@
 # reports/
 
+Team 6 đã sinh hồ sơ bằng `python -m tools.prepare_submission --replay-confirmed-review`.
+Các `metrics_*.json` hiện là **internal dev in-sample**, không phải official eval.
+`review_queue.csv` là 20 review thật được Trà xác nhận; `submission/` có before/after, binding, audit,
+slices, CI mô tả và OOD metadata. Ảnh/contact sheet trong thư mục này chỉ là synthetic BTC.
+Xem `group_report.md` để biết giới hạn và các điều kiện nộp chưa chứng minh được.
+
 | File | Ai tạo | Cách tạo |
 |---|---|---|
 | `group_report.md` | nhóm | điền template |

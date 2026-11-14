@@ -1,0 +1,31 @@
+{
+  "status": "HOLD",
+  "reason_code": "REVIEW_PENDING",
+  "reason": "Required reviews, skips or escalations remain unresolved",
+  "owner": "Hoàng Trọng Trà - 2A202603342 (Lead / Integrator)",
+  "scope": "t02",
+  "evidence": [
+    "out\\submission\\baseline\\raw_predictions.csv",
+    "out\\submission\\baseline\\ranked_review.csv",
+    "out\\submission\\baseline\\image_decisions.csv",
+    "out\\submission\\baseline\\review_queue.csv",
+    "out\\submission\\baseline\\review_context.json",
+    "out\\submission\\baseline\\policy_snapshot.json",
+    "out\\submission\\baseline\\audit_log.jsonl"
+  ],
+  "metrics": {
+    "policy_version": "t02-lead-v1",
+    "n_items": 96,
+    "n_keep": 76,
+    "n_recapture": 0,
+    "n_pending": 20,
+    "review_split": "all",
+    "budget": 20,
+    "n_queued": 20,
+    "n_reviewed": 0,
+    "n_escalated": 0,
+    "n_skipped": 0
+  },
+  "ts": "2026-11-14T14:32:37+00:00",
+  "canonical": "HOLD"
+}

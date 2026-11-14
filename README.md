@@ -6,6 +6,20 @@ Tích hợp và [policy T02 của Lead](docs/T02_POLICY.md) đã có review/audi
 Data, baseline Laplacian và PoC đa feature đã được tích hợp; lệnh chạy thật tạo prediction, queue và decision.
 Chưa review thì decision HOLD là bình thường; metric chính thức vẫn cần GT giảng viên.
 
+**Hồ sơ nộp Team 6:** [báo cáo](reports/group_report.md), [protocol đã freeze](reports/metric_contract.md),
+[bảng Baseline–PoC](reports/table1_baseline_vs_poc.md), [review của Trà](reports/review_queue.csv),
+[demo 5 slide](demo/team06_t02.pptx), [kịch bản demo](demo/README.md).
+Trà tiếp quản các phần còn lại; Git contribution cũ giữ nguyên và nêu minh bạch trong báo cáo.
+Kết quả hiện tại là **dev nội bộ**, không phải điểm eval chính thức. Sau 20 review thật, batch vẫn HOLD do 5 ảnh ngoài budget còn chờ.
+
+```powershell
+# Sinh lại Baseline/PoC, đánh giá dev, bảng/slices/CI và replay review đã được Trà xác nhận:
+.venv/Scripts/python.exe -m tools.prepare_submission --replay-confirmed-review
+```
+
+Lệnh này xác minh freeze và score gốc trước khi replay review; không tạo lượt duyệt mới.
+Ảnh BDD100K thật chỉ nằm trong `data/real/` gitignored; report chỉ lưu metadata/score/hash.
+
 Starter repo cho bài lab **Data Pipeline, Privacy & Production PoC**: 14 challenge (T01–T14), một contract chung.
 Repo cung cấp **dữ liệu offline + hạ tầng dùng chung + metric chuẩn + template báo cáo** để nhóm tập trung vào phần quan trọng:
 vấn đề, baseline, thuật toán, đánh giá trung thực, human-in-the-loop và quyết định GO/HOLD/REWORK.

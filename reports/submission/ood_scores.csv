@@ -1,0 +1,11 @@
+image_id,source_file_id,weather,timeofday,scene,score,pred_defect_type,pred_action,reason,resized_image_sha256
+bdd-b5dec5e7-065a0bb3,b5dec5e7-065a0bb3,foggy,night,city street,2.200744,dark,RECAPTURE,blur(tile_drop=3.10); dark(p95_drop=1.02),736f2139f2724f3dd4aaedcd5876f6e11c47110799e2183b394fd1d7c6f664da
+bdd-b27d5dcb-9230790c,b27d5dcb-9230790c,foggy,dawn/dusk,city street,2.2,glare,RECAPTURE,"blur(tile_drop=2.42); glare(sat=0.0348,blob=0.0300)",06abf953ce5d20996fc3e26b3ed26450a4f740d681a4c453bc3838638ebac6a5
+bdd-c78f9fc6-efac7090,c78f9fc6-efac7090,foggy,daytime,highway,2.2,glare,RECAPTURE,"blur(tile_drop=2.15); glare(sat=0.0279,blob=0.0536)",3232c40328e7d76c53ed8f8f92ddc5e1251a98bf974088c49c87ab84860015b2
+bdd-b7dc9921-fcfe3332,b7dc9921-fcfe3332,foggy,night,highway,2.18204,dark,RECAPTURE,"glare(sat=0.0057,blob=0.0031); dark(p95_drop=0.75); blur(tile_drop=1.41)",5b79c90c4535184ff74a27f2e27836b2fe10e20af3b1b6e3cc7acc1b2b3a4184
+bdd-b4863201-63b08472,b4863201-63b08472,foggy,daytime,residential,1.980718,glare,RECAPTURE,"blur(tile_drop=2.75); glare(sat=0.0001,blob=0.0110)",635e9ecfab07cc44df2cfaeb153d91a92b043b6122b68416ff0d8d43e9ff151b
+bdd-bb49071c-4b99a704,bb49071c-4b99a704,foggy,night,city street,1.857073,glare,RECAPTURE,"glare(sat=0.0070,blob=0.0018); blur(tile_drop=1.69)",3b43a4bc64d379dd701831c837bc8f4ccf855f715766536775fbb89c64aa05d9
+bdd-c6a5ec44-7b0e5542,c6a5ec44-7b0e5542,foggy,daytime,highway,1.660755,glare,RECAPTURE,"glare(sat=0.0000,blob=0.0567); blur(tile_drop=1.45)",c1302e01ad0cff1632cd14a15b1b6bb6f7c98c4e08f9cb20dc1b9c821478d862
+bdd-c7f97365-5be70930,c7f97365-5be70930,foggy,night,city street,1.585758,glare,RECAPTURE,"blur(tile_drop=2.34); glare(sat=0.0037,blob=0.0007)",ab2d7c645789b7c7d62683457b8e002390194e007b5669b557b3f000b156e7ff
+bdd-b9d34460-68942f09,b9d34460-68942f09,foggy,daytime,city street,1.05,glare,RECAPTURE,"glare(sat=0.0346,blob=0.0602)",799e9dbb55709a64bb591fc9582b93de0a48ab93185e4a56239ff983e8795888
+bdd-bbb46ace-1e415c05,bbb46ace-1e415c05,foggy,daytime,residential,1.05,glare,RECAPTURE,"glare(sat=0.0644,blob=0.0396)",1511b81a3a4b9b67e33293a8847cff58df0aa000f6307697e183d69d7df9bfc9

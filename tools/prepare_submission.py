@@ -7,6 +7,7 @@ Human decisions must be supplied separately; this tool never approves a review.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import math
@@ -45,7 +46,15 @@ def run(*args: str) -> None:
 
 
 def write_json(path: Path, data: dict) -> None:
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+    def clean(value):
+        if isinstance(value, dict):
+            return {k: clean(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [clean(v) for v in value]
+        return None if isinstance(value, float) and not math.isfinite(value) else value
+
+    # The shared evaluator emits NaN for undefined slice cells; publish JSON null.
+    path.write_text(json.dumps(clean(data), ensure_ascii=False, indent=2, allow_nan=False) + "\n",
                     encoding="utf-8", newline="\n")
 
 
@@ -97,8 +106,14 @@ def slices(gt: pd.DataFrame, predictions: pd.DataFrame, name: str) -> list[dict]
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--replay-confirmed-review", action="store_true",
+                        help="Replay the recorded human decisions only after exact raw-score/queue matching")
+    args = parser.parse_args()
     os.chdir(ROOT)
     freeze = verify_freeze()
+    confirmed_raw = (pd.read_csv(EVIDENCE / "poc/raw_predictions.csv")
+                     if args.replay_confirmed_review else None)
     EVIDENCE.mkdir(parents=True, exist_ok=True)
     gt = internal_gt()
     gt_path = EVIDENCE / "internal_dev_labels_joined.csv"
@@ -109,6 +124,22 @@ def main() -> None:
         output = RUNS / name
         run("-m", "src.main", "--config", CONFIG, "--pipeline", pipeline,
             "--output", str(output), "--offline", "--seed", "42", "--run-name", name)
+        if name == "poc" and args.replay_confirmed_review:
+            current = pd.read_csv(output / "raw_predictions.csv")
+            pd.testing.assert_frame_equal(current, confirmed_raw, check_exact=True)
+            confirmation = json.loads((EVIDENCE / "review_confirmation.json").read_text(encoding="utf-8"))
+            human = pd.read_csv("reports/review_queue.csv", keep_default_na=False)
+            if list(human.item_id) != confirmation["item_ids"] or not human.reviewer.eq(
+                    confirmation["confirmed_by"]).all():
+                raise ValueError("Human review differs from its recorded confirmation")
+            reviewed_path = output / "review_queue_reviewed.csv"
+            if reviewed_path.exists():
+                pd.testing.assert_frame_equal(pd.read_csv(reviewed_path, keep_default_na=False), human)
+            else:
+                human.to_csv(reviewed_path, index=False, lineterminator="\n")
+                # First run established current binding; policy validates immutable queue fields.
+                run("-m", "src.main", "--config", CONFIG, "--pipeline", pipeline,
+                    "--output", str(output), "--offline", "--seed", "42", "--run-name", name)
         metric_path = Path(f"reports/metrics_{name}.json")
         run("-m", "src.evaluate", "--track", "t02", "--config", CONFIG,
             "--gt", str(gt_path), "--pred", str(output / "ranked_review.csv"),
@@ -130,7 +161,8 @@ def main() -> None:
         destination.mkdir(exist_ok=True)
         # Synthetic fixture evidence only. No image-bearing HTML or real-data output is copied.
         for filename in ("raw_predictions.csv", "review_queue.csv", "image_decisions.csv",
-                         "decision.json", "run_info.json", "review_context.json", "policy_snapshot.json"):
+                         "decision.json", "run_info.json", "review_context.json", "policy_snapshot.json",
+                         "audit_log.jsonl", "decision_log.csv"):
             shutil.copyfile(output / filename, destination / filename)
     pd.DataFrame(all_slices).to_csv(EVIDENCE / "slices.csv", index=False, lineterminator="\n")
     write_json(EVIDENCE / "uncertainty.json", {
@@ -141,7 +173,7 @@ def main() -> None:
         "56 dev images, internal AI-assisted labels; design observed this dev set. B=20, seed=42.\n"
         "Review queue uses all 96 images; metrics first filter to 56 dev images.\n\n" + table + "\n",
         encoding="utf-8", newline="\n")
-    print("Evidence generated. Human review is still required; no review was auto-approved.")
+    print("Evidence generated. Existing human decisions may be applied; no new review was auto-approved.")
 
 
 if __name__ == "__main__":

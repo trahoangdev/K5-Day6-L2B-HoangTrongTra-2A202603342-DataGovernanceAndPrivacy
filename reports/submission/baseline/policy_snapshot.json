@@ -1,0 +1,12 @@
+{
+  "version": "t02-lead-v1",
+  "budget": 20,
+  "review_split": "all",
+  "precedence": [
+    "HOLD",
+    "REWORK",
+    "GO"
+  ],
+  "score_threshold": null,
+  "note": "Scoring thresholds belong to the scorer; review does not change scores"
+}

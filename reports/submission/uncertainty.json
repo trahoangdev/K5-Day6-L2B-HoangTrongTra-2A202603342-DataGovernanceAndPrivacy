@@ -1,0 +1,42 @@
+{
+  "scope": "internal_dev_in_sample_not_official",
+  "method": "Wilson 95% descriptive intervals for Recall@20 and Precision@20; not generalization intervals; within-scene dependence and dev tuning violate independent Bernoulli assumptions.",
+  "intervals": {
+    "baseline": {
+      "Defect Recall@B": {
+        "numerator": 20,
+        "denominator": 34,
+        "wilson95": [
+          0.42221593878812513,
+          0.7363403163612884
+        ]
+      },
+      "Precision@B": {
+        "numerator": 20,
+        "denominator": 20,
+        "wilson95": [
+          0.8388748419471806,
+          1.0
+        ]
+      }
+    },
+    "poc": {
+      "Defect Recall@B": {
+        "numerator": 20,
+        "denominator": 34,
+        "wilson95": [
+          0.42221593878812513,
+          0.7363403163612884
+        ]
+      },
+      "Precision@B": {
+        "numerator": 20,
+        "denominator": 20,
+        "wilson95": [
+          0.8388748419471806,
+          1.0
+        ]
+      }
+    }
+  }
+}

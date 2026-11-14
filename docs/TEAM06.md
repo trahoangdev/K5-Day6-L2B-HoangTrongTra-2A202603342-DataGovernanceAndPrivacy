@@ -155,3 +155,11 @@ Thông tin author/email thực tế và commit thực chất bổ sung vào `rep
 
 Mốc: phút 30 chốt contract; phút 50 baseline; phút 145 E2E; phút 170 QA; phút 180 freeze demo;
 +24h báo cáo và bằng chứng Git. Tag chưa được tạo trong đợt thiết lập này.
+# Cập nhật tiếp quản ngày 2026-11-14
+
+Theo yêu cầu của Trà, **Hoàng Trọng Trà – 2A202603342 tiếp quản toàn bộ phần còn lại**:
+hồ sơ freeze/evaluation, QA bổ sung, human review và demo. Phân công ban đầu phía dưới giữ để đối chiếu lịch sử.
+Giữ nguyên Git evidence của các thành viên đã đóng góp; không tạo commit thay tên Nguyễn Tuấn Minh.
+Trà đã xem và chấp thuận20 đề xuất RECAPTURE, có xác nhận và audit trong `reports/submission/`.
+Điều kiện BTC mỗi người có commit thực chất vẫn chưa đủ bằng chứng cho thành viên thứ sáu.
+

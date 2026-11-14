@@ -1,0 +1,35 @@
+{
+  "track": "t02",
+  "run_name": "baseline",
+  "status": 0,
+  "seed": 42,
+  "offline": true,
+  "input": "fixtures\\t02_raw_qc",
+  "output": "out\\submission\\baseline",
+  "pipeline": "src.team06.baseline",
+  "config_hash": "7f751b1ff45f",
+  "git_sha": "b1a2105",
+  "runtime_seconds": 0.3511,
+  "stats": {
+    "n_items": 96,
+    "n_queued": 20,
+    "n_reviewed": 0,
+    "provenance_verified": true,
+    "decision_status": "HOLD",
+    "baseline_threshold": 186.855,
+    "baseline_method": "global_laplacian_variance",
+    "baseline_n_suspected_blur": 18,
+    "review_split": "all",
+    "review_fingerprint": "b6f5d792535d"
+  },
+  "machine": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "output_check": {
+    "pred_file": "out\\submission\\baseline\\ranked_review.csv",
+    "exists": true,
+    "missing_columns": []
+  }
+}

@@ -1,0 +1,31 @@
+[OK  ] Python 3.12.14 (lab target 3.11)
+[OK  ] import numpy 2.5.4
+[OK  ] import pandas 3.1.1
+[OK  ] import PIL 13.0.0
+[OK  ] import cv2 5.0.0
+[OK  ] import sklearn 1.9.1
+[OK  ] import scipy 1.18.1
+[OK  ] import matplotlib 3.11.2
+[OK  ] import yaml 6.0.3
+[OK  ] import pytest 9.2.0
+[OK  ] t01 fixtures/t01_coverage (hashes match)
+[OK  ] t02 fixtures/t02_raw_qc (hashes match)
+[OK  ] t03 fixtures/t03_synthetic (hashes match)
+[OK  ] t04 fixtures/t04_sensor_sync (hashes match)
+[OK  ] t05 fixtures/t05_near_duplicate (hashes match)
+[OK  ] t06 fixtures/t06_release_gate (hashes match)
+[OK  ] t07 fixtures/t07_redaction (hashes match)
+[OK  ] t08 fixtures/t08_deletion (hashes match)
+[OK  ] t09 fixtures/t09_privacy_gate (hashes match)
+[OK  ] t10 fixtures/t10_domain_shift (hashes match)
+[OK  ] t11 fixtures/t11_label_errors (hashes match)
+[OK  ] t12 fixtures/t12_vendor_batches (hashes match)
+[OK  ] t13 fixtures/t13_rare_mining (hashes match)
+[OK  ] t14 fixtures/t14_auto_annotation (hashes match)
+[OK  ] offline guard blocks outbound network
+[OK  ] data/real present (2 packs)
+[WARN] models_optional/ not present (only for pretrained T07/T14 models)
+[OK  ] no HF token in tracked files
+[OK  ] .env not tracked by git
+
+preflight: 0 FAIL, 1 WARN

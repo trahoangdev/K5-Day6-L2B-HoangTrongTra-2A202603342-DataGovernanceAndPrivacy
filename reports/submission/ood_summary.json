@@ -1,0 +1,49 @@
+{
+  "scope": "unlabelled_real_OOD_smoke_test_not_accuracy",
+  "plan": {
+    "source": "dgural/bdd100k",
+    "n": 10,
+    "sampler": "unchanged tools.download_real_samples.pick_bdd, seed 42, rare scenarios first (fog cap13); not random-representative",
+    "max_side": 640,
+    "labels": false,
+    "purpose": "local unlabelled OOD smoke test; no accuracy claim; never retune",
+    "publish": "metadata/scores/hashes only; real pixels stay gitignored data/real"
+  },
+  "source_manifest_sha256": "437ee5d30154d29b4641706339ed0d8b0b520b2808851e81bbe2599908bdc91b",
+  "n_scored": 10,
+  "n_dev_reference": 56,
+  "seed": 42,
+  "offline": true,
+  "weather": {
+    "foggy": 10
+  },
+  "timeofday": {
+    "daytime": 5,
+    "night": 4,
+    "dawn/dusk": 1
+  },
+  "predicted_actions": {
+    "RECAPTURE": 10
+  },
+  "predicted_types": {
+    "glare": 8,
+    "dark": 2
+  },
+  "score_min": 1.05,
+  "score_max": 2.200744,
+  "runtime_seconds_including_dev_reference": 0.7786,
+  "git_sha": "b1a2105",
+  "machine": {
+    "python": "3.12.14",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel"
+  },
+  "limitations": [
+    "10 foggy images selected by unchanged rare-first sampler; not representative",
+    "No QC labels: recall, precision and false alarms are unknown",
+    "Unknown cameras/session IDs use singleton groups and frozen global-dev fallback",
+    "JPEG resized to max-side640/quality90 by existing prep, changing blockiness",
+    "Run now does not prove completion at historical +24h deadline"
+  ],
+  "privacy": "Real images/contact sheets stay in gitignored data/real; only metadata/scores/hashes published"
+}
