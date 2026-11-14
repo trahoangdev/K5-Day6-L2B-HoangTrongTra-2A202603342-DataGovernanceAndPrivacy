@@ -3,7 +3,7 @@
 56 dev images, internal AI-assisted labels; design observed this dev set. B=20, seed=42.
 Review queue uses all 96 images; metrics first filter to 56 dev images.
 
-Baseline: `baseline_internal_dev` (git b1a2105, seed 42) · PoC: `poc_internal_dev` (git b1a2105, seed 42)
+Baseline: `baseline_internal_dev` (git 24807f8, seed 42) · PoC: `poc_internal_dev` (git 24807f8, seed 42)
 
 | Metric (unit) | Slice | Baseline | PoC | Δ abs | Δ rel | Better | N |
 |---|---|---|---|---|---|---|---|
@@ -13,4 +13,4 @@ Baseline: `baseline_internal_dev` (git b1a2105, seed 42) · PoC: `poc_internal_d
 | False alarm in top-B (clean images in top-B / clean images) | light=day | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 36 |
 | False alarm in top-B (clean images in top-B / clean images) | light=dusk | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 16 |
 | False alarm in top-B (clean images in top-B / clean images) | light=night | 0.0000 | 0.0000 | 0.0000 | baseline=0 | lower | 4 |
-| Runtime / 100 items (s) | all | 0.3657 | 0.8172 | | | lower | |
+| Runtime / 100 items (s) | all | 0.4068 | 0.8693 | | | lower | |

@@ -34,6 +34,7 @@ python -m tools.build_demo_html
 Lệnh dùng JSON/CSV đã commit trong reports; không cần mạng, không sửa số liệu bằng tay.
 Font được lấy lại từ HTML đã có. Source layout ở `slides.template.html`.
 `python -m tools.write_submission_report` chỉ sinh report/contribution; không ghi đè slide HTML.
+Report và slide đọc kết quả pytest đã lưu ở `reports/submission/tests.txt`, không cần file XML trong `out/`.
 
 ## Kịch bản demo khoảng3 phút
 
@@ -50,4 +51,5 @@ python -m tools.prepare_submission --replay-confirmed-review
 ```
 
 Đây là replay20 quyết định Trà đã xác nhận, không phải20 lượt review mới.
+Audit review gốc được giữ nguyên; decision log chuẩn ở `reports/decision_log.csv` chỉ append các run mới.
 Bản PowerPoint cũ đã được thay bằng HTML dùng chung cho Team6.

@@ -8,7 +8,7 @@ Chưa review thì decision HOLD là bình thường; metric chính thức vẫn 
 
 **Hồ sơ nộp Team 6:** [báo cáo](reports/group_report.md), [protocol đã freeze](reports/metric_contract.md),
 [bảng Baseline–PoC](reports/table1_baseline_vs_poc.md), [review của Trà](reports/review_queue.csv),
-[demo HTML 5 slide của Team 6](demo/index.html), [kịch bản demo](demo/README.md).
+[decision log](reports/decision_log.csv), [demo HTML 5 slide của Team 6](demo/index.html), [kịch bản demo](demo/README.md).
 Trà tiếp quản các phần còn lại; Git contribution cũ giữ nguyên và nêu minh bạch trong báo cáo.
 Kết quả hiện tại là **dev nội bộ**, không phải điểm eval chính thức. Sau 20 review thật, batch vẫn HOLD do 5 ảnh ngoài budget còn chờ.
 
@@ -18,6 +18,9 @@ Kết quả hiện tại là **dev nội bộ**, không phải điểm eval chí
 ```
 
 Lệnh này xác minh freeze và score gốc trước khi replay review; không tạo lượt duyệt mới.
+Output chi tiết của Baseline/PoC nằm trong `out/submission/` và được ignore. Exporter chỉ giữ bộ bằng chứng PoC đã chọn,
+không ghi đè snapshot review gốc; `reports/decision_log.csv` được append, không thay lịch sử.
+`python -m tools.write_submission_report` sinh lại report từ bằng chứng và kết quả pytest đã lưu trong repo, không cần JUnit XML cục bộ.
 Ảnh BDD100K thật chỉ nằm trong `data/real/` gitignored; report chỉ lưu metadata/score/hash.
 
 Starter repo cho bài lab **Data Pipeline, Privacy & Production PoC**: 14 challenge (T01–T14), một contract chung.

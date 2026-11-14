@@ -1,4 +1,4 @@
-"""Render the report/demo source from generated evidence, never hand-enter metrics."""
+"""Render the group report from saved evidence, including saved pytest results."""
 from __future__ import annotations
 
 import csv
@@ -6,11 +6,10 @@ import json
 import os
 from pathlib import Path
 import subprocess
-import xml.etree.ElementTree as ET
 
 import pandas as pd
 
-from tools.prepare_submission import ROOT
+from tools.prepare_submission import ROOT, read_test_counts
 
 
 def read(path):
@@ -29,9 +28,10 @@ def main():
     final = pd.read_csv("reports/submission/poc/image_decisions.csv")
     pending = ", ".join(final.loc[final.pred_action.eq("REVIEW"), "image_id"])
     slices = pd.read_csv("reports/submission/slices.csv")
-    suite = ET.parse("out/submission/tests.xml").getroot().find("testsuite")
-    passed = int(suite.get("tests")) - int(suite.get("skipped")) - int(suite.get("failures")) - int(suite.get("errors"))
-    test_summary = f"{passed} passed, {suite.get('skipped')} skipped, {suite.get('failures')} failed"
+    tests = read_test_counts()
+    test_summary = f"{tests['passed']} passed, {tests['skipped']} skipped, {tests['failed']} failed"
+    if tests["errors"]:
+        test_summary += f", {tests['errors']} errors"
     roster = [
         ("Hoàng Trọng Trà – 2A202603342", "Lead / Integrator; tiếp quản phần còn lại", "52b3cf1", "src/team06/integration.py; src/team06/policy.py; tools/; reports/; demo/", "Trà trình bày toàn bộ demo; AI hỗ trợ implementation và soạn hồ sơ"),
         ("Nguyễn Quốc Hưng – 2A202603324", "Data & Provenance", "bd0850f", "src/team06/data.py; tools/data_audit.py; reports/internal_labels_t02_*.csv", "Git evidence thực tế; đính chính camera 17a80f6"),
@@ -69,7 +69,8 @@ Hoàng Trọng Trà – 2A202603342 chịu trách nhiệm tích hợp và tiếp
 Repo: https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy.
 Đối chiếu BTC main `b0ce8bf`. Hồ sơ hiện tại cho thấy pipeline hoạt động, **chưa chứng minh chất lượng heldout**.
 Freeze ghi nhận {freeze['frozen_at_utc']}, base `{freeze['base_commit'][:7]}`. Chưa có bằng chứng mốc phút 30/180 hoặc deadline +24h.
-Không đặt tag lịch sử `demo-180m`/`final-24h` để giả lập thời hạn. Deadline lớp chưa được cung cấp.
+Group ID: **G06**. Tag `demo-180m` và `final-24h`: chưa chốt; deadline lớp: chưa được cung cấp.
+Khi chốt bản nộp, tag `final-24h` cần trỏ đúng commit được nộp với timestamp thực tế, không backdate hoặc suy diễn đã đúng hạn.
 
 ## 1. Vấn đề và đầu ra
 
@@ -159,7 +160,8 @@ Trà đã xác nhận trong chat: “Tôi đã xem và chấp thuận RECAPTURE 
 `reports/review_queue.csv` giữ reviewer, timestamp và lý do riêng từng ảnh; `review_confirmation.json` ghi nguyên văn phạm vi xác nhận.
 AI đưa đề xuất thị giác trước, Trà chấp thuận sau khi xem. Không coi đây là đánh giá mù hoặc annotator thứ hai.
 Pipeline áp approve trên đề xuất RECAPTURE, không sửa score, metadata hay thứ hạng.
-`audit_log.jsonl` ghi trước/sau, actor và binding; CSV review cũ sai context bị chặn.
+`reports/submission/poc/audit_log.jsonl` lưu bằng chứng review gốc; CSV review cũ sai context bị chặn.
+Snapshot review đã công bố được giữ nguyên khi replay. Decision log chuẩn ở `reports/decision_log.csv`, chỉ append run mới.
 
 Trước review: {before['metrics']['n_reviewed']} reviewed, {before['metrics']['n_pending']} pending, {before['status']}.
 Sau review: {counts['n_reviewed']} reviewed, {counts['n_keep']} KEEP, {counts['n_recapture']} RECAPTURE,
@@ -182,7 +184,9 @@ không chứng minh model phát hiện đúng lỗi. Resize/JPEG chất lượng
 Nguồn mirror và điều kiện research/education được ghi theo prep BTC; cần kiểm lại quyền sử dụng ngoài bài lab.
 
 Kiểm tra hiện tại: **{test_summary}**, preflight exit0, manifest exit0.
-39 skip do bài chấm cần GT overlay giảng viên. Log ở `reports/submission/tests.txt`, `preflight.txt`, `manifests.txt`.
+Các test skip cần GT overlay giảng viên. Kết quả pytest đã lưu ở `reports/submission/tests.txt`;
+report đọc kết quả đã ghi nhận này, không đòi JUnit XML cục bộ và không coi việc sinh report là chạy test mới.
+Log preflight/manifest và output chi tiết của từng lần chạy nằm trong `out/`, không đưa vào Git.
 QA lịch sử của Hùng trên Windows từng có 16 lỗi checksum, 118 pass và 39 skip tại 081fae2;
 đây là bằng chứng môi trường cũ, không xóa lịch sử hoặc coi là lỗi test hiện tại. Checkout giữ byte LF đã khắc phục.
 

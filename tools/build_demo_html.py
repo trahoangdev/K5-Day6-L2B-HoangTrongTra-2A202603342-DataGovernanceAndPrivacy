@@ -16,6 +16,8 @@ import re
 
 import pandas as pd
 
+from tools.prepare_submission import read_test_counts
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -42,9 +44,8 @@ def main():
     clean = read("reports/submission/clean_checkout.json")
     if not clean["raw_scores_replay_matched"] or decision["status"] != "HOLD":
         raise ValueError("Review the deck narrative against changed evidence")
-    tests = Path("reports/submission/tests.txt").read_text(encoding="utf-8")
-    match = re.search(r"(\d+) passed, (\d+) skipped", tests)
-    if not match or "failed" in tests:
+    tests = read_test_counts()
+    if not tests["passed"] or tests["failed"] or tests["errors"]:
         raise ValueError("Expected a passing test summary")
     roster = [
         ("Hoàng Trọng Trà", "2A202603342", "Lead / Integrator"),
@@ -81,7 +82,7 @@ def main():
         {"timing": "Slide 5 · 30 giây · Tổng khoảng 3 phút", "html": "<p>Mở terminal chạy một lệnh tái lập, rồi xem decision.json và contact sheet. Clean checkout đã xác minh không cần download dữ liệu thật để tái lập fixture/demo.39 tests skip do cần GT instructor. Khi có official GT, giảng viên chạy evaluator split eval; không tune sau kết quả.</p><p>10 OOD thật đều foggy do rare first sampler seed42, không đại diện phân phối thật. Toàn bộ bị đề xuất RECAPTURE có thể là false alarm/domain shift. Không có QC GT để báo accuracy. Ảnh thật giữ local.</p><p>Checklist còn thiếu: official eval, Git evidence thành viên thứ6, bằng chứng tag demo180m/final24h đúng mốc. Không tự gán điểm rubric hoặc tuyên bố đạt tất cả guideline. Không giả tag lịch sử.</p>"},
     ]
     tokens = {"FONT": font, "FONT_LICENSE": Path("demo/Manrope-OFL.txt").read_text(encoding="utf-8"), "ROSTER": members, "METRIC_ROWS": "".join(rows),
-              "SLICES": "".join(blocks), "PASSED": match[1], "SKIPPED": match[2],
+              "SLICES": "".join(blocks), "PASSED": str(tests["passed"]), "SKIPPED": str(tests["skipped"]),
               "REVIEWED": str(decision["metrics"]["n_reviewed"]), "KEEP": str(decision["metrics"]["n_keep"]),
               "RECAPTURE": str(decision["metrics"]["n_recapture"]), "PENDING": str(decision["metrics"]["n_pending"]),
               "OOD_N": str(ood["n_scored"]), "DOTS": "".join(f'<button type="button" aria-label="Slide {n}" aria-current="{str(n==1).lower()}">{n}</button>' for n in range(1, 6)),

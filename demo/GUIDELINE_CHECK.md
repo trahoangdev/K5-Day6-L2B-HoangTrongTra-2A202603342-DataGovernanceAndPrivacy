@@ -16,7 +16,7 @@ Nguồn: [README, timeline và rubric](https://github.com/VinUni-AI20k/K5-Day6-L
 | Official eval/heldout | Slide3/5 nêu chưa có GT giảng viên | Chưa có điểm chính thức |
 | Contact sheet20, override/audit, decision có reason/owner | Slide4, review_queue.csv, confirmation, audit, decision.json | Có20 review thật; batch HOLD |
 | Failure analysis: đêm hữu ích, glare, camera | Slide4/5 và ghi chú: ảnh synthetic, dev misses; đính chính suy luận camB | Có phân tích, không dựng lỗi camera chưa chứng minh |
-| Reliability, offline, seed, tests, clean start | Slide5, 140 pass/39 skip,14 fixture manifests, clean checkout | Có bằng chứng |
+| Reliability, offline, seed, tests, clean start | Slide5, 146 pass/39 skip,14 fixture manifests, clean checkout | Có bằng chứng |
 | Kiểm10 OOD ở phần +24h | Slide5, ood_scores.csv/ood_summary.json | Có smoke test; chưa có QC GT và không chứng minh thời hạn |
 | Team Git evidence từng người | Ghi chú slide1/5, team_contributions.csv | Chưa có commit thực chất của thành viên thứ6 |
 | Tag demo180m/final24h đúng mốc | Slide5/ghi chú | Chưa xác minh, không tạo tag giả thời hạn |

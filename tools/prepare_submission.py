@@ -8,11 +8,13 @@ Human decisions must be supplied separately; this tool never approves a review.
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import math
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import sys
@@ -26,6 +28,10 @@ CONFIG = "configs/submission.yaml"
 EVIDENCE = Path("reports/submission")
 RUNS = Path("out/submission")
 SCOPE = "internal_dev_in_sample_not_official"
+# One archived PoC review is enough to reproduce the human evidence. Everything
+# else stays in RUNS; Baseline is represented by its generated metrics JSON.
+POC_EVIDENCE_FILES = ("raw_predictions.csv", "image_decisions.csv", "decision.json",
+                      "review_context.json", "audit_log.jsonl")
 
 
 def digest(path: str | Path) -> str:
@@ -56,6 +62,73 @@ def write_json(path: Path, data: dict) -> None:
     # The shared evaluator emits NaN for undefined slice cells; publish JSON null.
     path.write_text(json.dumps(clean(data), ensure_ascii=False, indent=2, allow_nan=False) + "\n",
                     encoding="utf-8", newline="\n")
+
+
+def read_test_counts(path: Path = EVIDENCE / "tests.txt") -> dict[str, int]:
+    """Read saved pytest results on a clean clone, without a local JUnit XML.
+
+    This reports the recorded verification, not a new execution of pytest.
+    Failed/error counts must remain visible to report/demo consumers.
+    """
+    lines = path.read_text(encoding="utf-8").splitlines()
+    for line in reversed(lines):
+        matches = re.findall(r"\b(\d+) (passed|skipped|failed|errors?|xfailed|xpassed)\b", line)
+        if matches:
+            counts = dict.fromkeys(("passed", "skipped", "failed", "errors", "xfailed", "xpassed"), 0)
+            for number, name in matches:
+                counts["errors" if name == "error" else name] = int(number)
+            return counts
+    raise ValueError(f"No pytest summary found in {path}; run pytest and save its output first")
+
+
+def append_decision_log(source: Path, destination: Path) -> None:
+    """Publish actual run decisions, preserving the existing log byte prefix."""
+    with source.open(encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream)
+        columns, rows = reader.fieldnames, list(reader)
+    if not columns or any(None in row or None in row.values() for row in rows):
+        raise ValueError(f"Invalid decision log: {source}")
+    existing = []
+    if destination.exists():
+        with destination.open(encoding="utf-8", newline="") as stream:
+            reader = csv.DictReader(stream)
+            if reader.fieldnames != columns:
+                raise ValueError("Decision log schema differs from the published log")
+            existing = list(reader)
+        if destination.stat().st_size and not destination.read_bytes().endswith(b"\n"):
+            raise ValueError("Published decision log must end with a newline before appending")
+    seen = {tuple(row[column] for column in columns) for row in existing}
+    new = []
+    for row in rows:
+        key = tuple(row[column] for column in columns)
+        if key not in seen:
+            seen.add(key)
+            new.append(row)
+    if not new and destination.exists():
+        return
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    with destination.open("a", encoding="utf-8", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=columns, lineterminator="\n")
+        if not existing and stream.tell() == 0:
+            writer.writeheader()
+        writer.writerows(new)
+
+
+def export_run_evidence(name: str, output: Path) -> None:
+    """Whitelist published evidence; never overwrite an archived human review.
+
+    Reruns/replays remain in out/submission. The committed snapshot records the
+    original confirmed review, rather than replacing it with a new replay log.
+    """
+    if name != "poc":
+        return
+    destination = EVIDENCE / "poc"
+    destination.mkdir(parents=True, exist_ok=True)
+    for filename in POC_EVIDENCE_FILES:
+        target = destination / filename
+        if not target.exists():
+            shutil.copyfile(output / filename, target)
+    append_decision_log(output / "decision_log.csv", Path("reports/decision_log.csv"))
 
 
 def internal_gt() -> pd.DataFrame:
@@ -157,13 +230,7 @@ def main() -> None:
                            for m in data["metrics"] if m["name"] in {"Defect Recall@B", "Precision@B"}}
         predictions = pd.read_csv(output / "raw_predictions.csv")
         all_slices.extend(slices(gt, predictions, name))
-        destination = EVIDENCE / name
-        destination.mkdir(exist_ok=True)
-        # Synthetic fixture evidence only. No image-bearing HTML or real-data output is copied.
-        for filename in ("raw_predictions.csv", "review_queue.csv", "image_decisions.csv",
-                         "decision.json", "run_info.json", "review_context.json", "policy_snapshot.json",
-                         "audit_log.jsonl", "decision_log.csv"):
-            shutil.copyfile(output / filename, destination / filename)
+        export_run_evidence(name, output)
     pd.DataFrame(all_slices).to_csv(EVIDENCE / "slices.csv", index=False, lineterminator="\n")
     write_json(EVIDENCE / "uncertainty.json", {
         "scope": SCOPE, "method": freeze["uncertainty"], "intervals": intervals})
