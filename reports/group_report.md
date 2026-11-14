@@ -12,9 +12,9 @@
 | Challenge | T02 · Raw QC Triage |
 | Thành viên (5–6) + vai trò | Hoàng Trọng Trà – 2A202603342 (Lead / Integrator); Nguyễn Quốc Hưng – 2A202603324 (Data & Provenance); Phạm Văn Dương – 2A202603332 (Baseline & Research); Nguyễn Nhật Hạ – 2A202603325 (Core Algorithm / PoC); Lê Trần Phi Hùng – 2A202603353 (QA & Evaluation); Nguyễn Tuấn Minh – 2A202603349 (Human Review & Demo) |
 | Git URL | https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy |
-| Tag `demo-180m` (commit) | Chưa tạo; chưa có bằng chứng freeze đúng phút 180 |
-| Tag `final-24h` (commit) | Chưa tạo; cần trỏ đúng commit nộp cuối với timestamp thực tế |
-| Deadline (giờ VN) | Chưa được cung cấp/xác nhận; không suy ra từ thời điểm commit |
+| Tag `demo-180m` (commit) | [demo-180m](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/demo-180m), annotated tag; tra commit bằng `git rev-parse demo-180m^{commit}`. Tạo bổ sung sau mốc 16:00, không chứng minh freeze đúng phút 180. |
+| Tag `final-24h` (commit) | [final-24h](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/final-24h), annotated tag; tra commit bằng `git rev-parse final-24h^{commit}`. Cùng commit chốt hiện tại với tag demo, timestamp thực tế trong Git. |
+| Deadline (giờ VN) | **15/11/2026 11:59 (UTC+7)**, theo Trà cung cấp ngày 14/11/2026. Bắt đầu 14/11/2026 13:00; mốc 180 phút là 16:00 cùng ngày. Dùng hạn cụ thể này, không suy ra deadline từ thời điểm commit hoặc tên tag. |
 
 ## 01 · Problem statement
 
@@ -138,7 +138,7 @@ pytest -q
 - Điều chưa biết: nhãn dev có bias AI/prelabel, thiếu đánh giá độc lập và hidden eval; night dev chỉ 4 ảnh, cam_A/night không có dev cho chuẩn camera×light. Khi tăng 10× cần đo lại CPU/memory, kích thước contact sheet và công suất reviewer.
 - OOD: 10 ảnh foggy (5 daytime, 4 night, 1 dawn/dusk), đủ score hữu hạn 1.050000–2.200744; tất cả bị đề xuất RECAPTURE, loại dự đoán glare 8/dark 2. Không có QC GT nên không báo accuracy; resize/JPEG 90 ảnh hưởng feature. Đây không phải mẫu đại diện hay bằng chứng đúng hạn +24h.
 - Không tuyên bố đạt GDPR/luật Việt Nam từ checklist. DPO/legal/domain owner cần xác nhận quyền dùng ảnh, tiêu chí ảnh hữu ích và hành động recapture.
-- Kế hoạch: review phần pending bằng protocol riêng, bổ sung human labels độc lập và OOD negatives, chấm hidden eval với giảng viên, đo lại budget/runtime. Chưa có tag/thời hạn được xác minh, showcase thực tế hoặc commit thực chất của thành viên thứ sáu.
+- Kế hoạch: review phần pending bằng protocol riêng, bổ sung human labels độc lập và OOD negatives, chấm hidden eval với giảng viên, đo lại budget/runtime. Tag và hạn nộp ghi ở mục 00; tag demo được tạo bổ sung sau mốc 180 phút, không phải bằng chứng đúng mốc. Chưa ghi nhận showcase thực tế hoặc commit thực chất của thành viên thứ sáu.
 
 ## 10 · Team contribution
 
@@ -167,7 +167,7 @@ Vai trò là phân công ban đầu; Lead đã tiếp quản phần chưa hoàn 
 
 **Bảng 3 · Checklist chốt khi nộp**
 
-- [ ] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật. **Chưa có tag cuối.**
+- [x] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật. **Tag annotated `demo-180m` và `final-24h` ghi thời gian thực tế; deadline 15/11/2026 11:59 UTC+7 theo Trà cung cấp. Không khẳng định freeze demo đúng phút 180.**
 - [x] Đúng 1 lệnh run, 1 lệnh evaluate, 1 lệnh tests; không cần download khi chạy. **Flow dev nội bộ ở mục 08; official GT do BTC cấp.**
 - [x] Có baseline/PoC metrics, ≥1 failure case, reviewer evidence, decision log.
 - [x] Có license/source provenance, data splits, seed, offline environment, GT/eval N. **Dev 56/eval fixture 40; hidden N chưa được cấp và đã công bố rõ.**

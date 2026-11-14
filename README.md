@@ -1,10 +1,34 @@
-# Day 06 · Data Lab · Field-to-Release PoC (AI20K · Data Track)
+# Team 6 · T02 Raw QC Triage · Day 06 Data Lab
 
-Starter repo cho bài lab **Data Pipeline, Privacy & Production PoC**: 14 challenge (T01–T14), một contract chung.
-Repo cung cấp **dữ liệu offline + hạ tầng dùng chung + metric chuẩn + template báo cáo** để nhóm tập trung vào phần quan trọng:
-vấn đề, baseline, thuật toán, đánh giá trung thực, human-in-the-loop và quyết định GO/HOLD/REWORK.
+Sản phẩm chung của Team 6 (G06), Lead Hoàng Trọng Trà – 2A202603342. Nhóm triển khai T02 trên hạ tầng [BTC Day 06](https://github.com/VinUni-AI20k/K5-Day6-L2-DataGovernanceAndPrivacy).
 
-> Repo **không** chứa lời giải. `src/pipeline.py` là file nhóm sở hữu; mọi thuật toán (kể cả baseline) do nhóm tự cài.
+## Hồ sơ nộp · tag và deadline
+
+| Mốc | Giờ Việt Nam (UTC+7) / bằng chứng |
+|---|---|
+| Bắt đầu lab | 14/11/2026 13:00 |
+| Mốc 180 phút theo giờ bắt đầu | 14/11/2026 16:00; chưa có bằng chứng đã freeze đúng mốc |
+| Hạn nộp cụ thể | **15/11/2026 11:59** |
+| Nguồn lịch | Trà cung cấp trong trao đổi ngày 14/11/2026; đây là hạn cụ thể, không tự cộng 24 giờ từ thời điểm commit |
+| Tag demo | [`demo-180m`](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/demo-180m), annotated tag ghi nhận bản demo hiện tại |
+| Tag nộp | [`final-24h`](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/final-24h), annotated tag của bản chốt nộp hiện tại |
+
+Hai tag trỏ cùng commit chứa hồ sơ và slide mới trên nhánh `feat/team06-submission`. Thời điểm tạo tag lấy từ Git, không ghi lùi ngày. `demo-180m` được tạo bổ sung sau 16:00, không chứng minh checkpoint đúng phút 180. Tên `final-24h` theo quy ước BTC; hạn nộp áp dụng là **11:59 ngày 15/11**, không phải 13:00 ngày 15/11. Tag không thay thế bằng chứng đóng góp cá nhân, showcase hoặc điểm hidden eval.
+
+[Report nhóm](reports/group_report.md) · [Metric contract](reports/metric_contract.md) · [Đóng góp](reports/team_contributions.csv) · [Slide HTML](demo/index.html)
+
+```bash
+git fetch origin --tags
+git checkout final-24h
+git show --no-patch demo-180m
+git show --no-patch final-24h
+make setup && ./run.sh
+```
+
+Sau khi kích hoạt môi trường, tái lập cả Baseline/PoC, metric dev và xác nhận review đã lưu bằng `python -m tools.prepare_submission --replay-confirmed-review`. Đây là replay bằng chứng gốc, không phải lượt review mới. GT chính thức do giảng viên cung cấp; dữ liệu thật và output chi tiết không commit.
+
+Phần dưới giữ tài liệu hạ tầng starter của BTC cho 14 track; cấu hình và pipeline của nhóm đã chọn T02.
+
 > Tài liệu học tập, không thay tư vấn pháp lý.
 
 ## 1. Quickstart (≤ 5 phút, chạy offline)
