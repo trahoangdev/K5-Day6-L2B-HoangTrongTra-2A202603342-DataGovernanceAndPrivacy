@@ -138,6 +138,45 @@ Hệ quả cho nhóm khi đọc kết quả:
 - Nhãn của giảng viên (`gt/`) không có thiên lệch này, nên thứ hạng baseline/PoC
   khi chấm chính thức có thể khác hẳn.
 
+## 3d. Kết quả thực tế
+
+| Chỉ số | Giá trị | Ngưỡng | Đạt |
+|---|---:|---:|:--:|
+| N lượt 1 (toàn bộ `dev`) | 56 | — | — |
+| N lượt 2 (mẫu gán lại) | 20 | — | — |
+| Nhất quán `is_defect` | 0,900 | — | — |
+| **Cohen's κ test-retest trên `is_defect`** | **0,800** | 0,70 | ✓ |
+| Nhất quán `defect_type` | 0,850 | 0,70 | ✓ |
+| Ảnh phải đối soát | 3 / 20 | — | — |
+
+Phân bố nhãn cuối: `none` 22 · `blur` 15 · `compression` 9 · `dark` 6 · `glare` 4.
+Tỷ lệ lỗi trên `dev`: 34/56 = 60,7%.
+
+File cuối: `reports/internal_labels_t02_final.csv`, có cột `source` ghi mỗi ảnh
+đến từ đâu (`pass1_only` 36 · `pass1+retest_agreed` 17 · `adjudicated` 3).
+
+### Lượt 2 phải làm lại — và vì sao chi tiết này đáng ghi
+
+Lần gán lượt 2 **đầu tiên** cho κ = **0,500**, trượt ngưỡng. Ma trận chéo cho thấy
+5 ảnh bị chuyển từ `none` sang `blur`, và cả 5 đều nằm trong nhóm **nét nhất tập
+dữ liệu**: `img_12_1` (877), `img_11_1` (1086), `img_00_1` (1366), `img_20_0`
+(1439), `img_14_1` (1547). Dải `blur` của lượt đó trải từ 2 đến 1439 — tức gần
+hết thang độ nét, không còn ranh giới nào.
+
+Đó không phải vạch bị xê dịch mà là lượt gán không áp một tiêu chí nhất quán.
+Gán lại cẩn thận thì κ lên 0,800.
+
+Ghi lại vì nó chứng minh bước test-retest **có tác dụng thật**: nếu bỏ qua, nhóm
+đã chốt ngưỡng thuật toán trên một bộ nhãn mà chính người gán không tái lập được.
+
+### Ba ảnh đối soát
+
+| Ảnh | Lượt 1 | Lượt 2 | Chốt | Lý do |
+|---|---|---|---|---|
+| `img_08_2` | compression | blur | **compression** | Nét 479 so với 1037/1050 của hai ảnh sạch cùng cảnh — cả hai lượt đều coi là lỗi, chỉ khác loại. Ở cỡ thật thấy rõ vỡ khối JPEG. Không ảnh hưởng metric chính vì `is_defect` = 1 ở cả hai lượt. |
+| `img_11_1` | none | blur | **none** | Nét 1086, gần bằng ảnh sạch nhất cùng cảnh (1112). |
+| `img_12_1` | none | blur | **none** | Nét 877, là ảnh **nét nhất** cảnh đó (166 · 877 · 183 · 43). Gọi nó là `blur` mâu thuẫn với quy ước "so trong cùng cảnh". |
+
 ## 4. Ngưỡng chấp nhận
 
 Vì chỉ một người gán, ngưỡng áp lên chỉ số test-retest:
