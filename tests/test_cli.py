@@ -15,7 +15,8 @@ from src.common.offline import NetworkBlockedError, disable_offline_guard, enabl
 
 
 def test_template_pipeline_fails_clearly_not_silently(tmp_path):
-    rc = runner.main(["--track", "t02", "--output", str(tmp_path), "--offline"])
+    # T02 PoC is implemented now, so check the stub contract on a track that still is not.
+    rc = runner.main(["--track", "t04", "--output", str(tmp_path), "--offline"])
     assert rc == 3                                   # NotImplemented -> explicit exit code
     info = json.loads((tmp_path / "run_info.json").read_text())
     assert info["status"] == 3 and info["seed"] == 42
