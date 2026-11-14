@@ -1,30 +1,5 @@
 # Day 06 · Data Lab · Field-to-Release PoC (AI20K · Data Track)
 
-**Team 6 · G06 · T02 Raw QC Triage.** Lead: Hoàng Trọng Trà, 2A202603342.
-Thành viên, phương pháp, kết quả và giới hạn: [báo cáo nhóm](reports/group_report.md).
-Bản nộp: [metric contract](reports/metric_contract.md), [so sánh Baseline–PoC](reports/table1_baseline_vs_poc.md),
-[review đã xác nhận](reports/review_queue.csv), [decision log](reports/decision_log.csv), [audit](reports/audit_log.jsonl),
-[Git contributions](reports/team_contributions.csv), [slide HTML chung của nhóm](demo/index.html).
-
-```powershell
-# Pipeline theo contract BTC:
-python -m src.main --config configs/lab.yaml --output out/poc --offline --seed 42
-# Sinh Baseline/PoC, chấm dev nội bộ và replay 20 review đã được xác nhận:
-python -m tools.prepare_submission --replay-confirmed-review
-# Tests:
-python -m pytest -q
-```
-
-Sau khi cài requirements và kích hoạt .venv, các lệnh trên chạy offline.
-Kết quả đang công bố là dev nội bộ, không phải điểm hidden eval. Batch sau review vẫn HOLD vì 5 ảnh ngoài budget còn chờ.
-Nhãn dev và hồ sơ adjudication được giữ để kiểm chứng; ảnh thật BDD100K chỉ nằm trong data/real/ gitignored.
-Cấu hình duy nhất là configs/lab.yaml; protocol_freeze.json giữ hash và binding của review gốc.
-Chi tiết prediction, contact sheet, slices, CI và log kiểm tra được sinh trong out/, không commit.
-
-Slide HTML có 5 slide, đủ 6 thành viên, mở trực tiếp bằng trình duyệt và dùng font/ảnh nhúng offline.
-Phím ←/→ đổi slide, F toàn màn hình, N ghi chú, O tổng quan, P in 5 trang. Link contact sheet hoạt động sau lệnh prepare_submission.
-Tag final-24h chưa chốt; khi chốt nộp phải trỏ đúng commit thực tế, không backdate.
-
 Starter repo cho bài lab **Data Pipeline, Privacy & Production PoC**: 14 challenge (T01–T14), một contract chung.
 Repo cung cấp **dữ liệu offline + hạ tầng dùng chung + metric chuẩn + template báo cáo** để nhóm tập trung vào phần quan trọng:
 vấn đề, baseline, thuật toán, đánh giá trung thực, human-in-the-loop và quyết định GO/HOLD/REWORK.

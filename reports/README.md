@@ -1,17 +1,14 @@
-# Reports của Team 6 · T02
+# reports/
 
-Bộ chính theo mẫu BTC: group_report.md, metric_contract.md, metrics_baseline.json, metrics_poc.json,
-table1_baseline_vs_poc.md, review_queue.csv, decision_log.csv và team_contributions.csv.
+| File | Ai tạo | Cách tạo |
+|---|---|---|
+| `group_report.md` | nhóm | điền template |
+| `metric_contract.md` | nhóm | điền ở phút 30 |
+| `metrics_baseline.json` | **script** | `python -m src.evaluate --track tXX --pred out/baseline/<file> --run-name baseline --out reports/metrics_baseline.json` |
+| `metrics_poc.json` | **script** | `python -m src.evaluate --track tXX --pred out/poc/<file> --run-name poc --out reports/metrics_poc.json` |
+| `table1_baseline_vs_poc.md` | **script** | `python -m src.compare reports/metrics_baseline.json reports/metrics_poc.json --out reports/table1_baseline_vs_poc.md` |
+| `review_queue.csv` | pipeline + reviewer | copy từ `out/poc/review_queue.csv` sau khi review (có cột reviewer/decision) |
+| `decision_log.csv` | pipeline | copy từ `out/poc/decision_log.csv` |
+| `team_contributions.csv` | nhóm | khớp với `git shortlog -sne --all` |
 
-Chỉ giữ thêm bằng chứng cần kiểm chứng: audit_log.jsonl (review thật), internal_labels_t02_final.csv (gold dev nội bộ)
-và adjudication_img_18_3.json (nguồn gốc quyết định nhãn). Binding input/score/reviewer ở configs/protocol_freeze.json.
-Không đưa snapshot, handoff, nhãn trung gian, log kiểm tra hoặc file sinh tạm vào reports.
-
-```powershell
-python -m tools.prepare_submission --replay-confirmed-review
-```
-
-Lệnh dùng runner/evaluator BTC nguyên gốc, xuất metrics và bảng so sánh ở reports; prediction, contact sheet,
-GT dev đã join, slices và CI ở out/submission. Decision log chỉ append, audit review gốc không bị ghi đè.
-Report và slide là bản nộp cuối; các con số lấy từ output script, không sửa metric để đẹp số.
-Kết quả hiện tại là dev nội bộ có AI hỗ trợ gán nhãn, không phải official eval/hidden eval của giảng viên.
+Các file metrics/table **không được sửa tay** — giảng viên sẽ chạy lại lệnh để đối chiếu.
