@@ -1,4 +1,5 @@
-image_id,defect_type_A,severity_A,defect_type_B,severity_B
-img_08_2,compression,1,blur,1
-img_11_1,none,0,blur,0
-img_12_1,none,0,blur,0
+image_id,defect_type_A,defect_type_B,severity_A,severity_B,is_defect_A,is_defect_B
+img_08_2,compression,blur,1,1,1,1
+img_11_1,none,blur,0,0,0,1
+img_12_1,none,blur,0,0,0,1
+img_18_3,blur,blur,1,2,1,1

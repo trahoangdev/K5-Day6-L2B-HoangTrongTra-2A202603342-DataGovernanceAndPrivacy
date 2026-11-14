@@ -320,3 +320,21 @@ def test_cli_guards_remain_active_inside_scorer(ctx, monkeypatch, tmp_path, atte
                  "--output", str(ctx.output_dir), "--offline"]) == code
     assert decision(ctx)["status"] == "HOLD"
     assert not ctx.out("ranked_review.csv").exists()
+
+
+@pytest.mark.parametrize("invalid", ["nan_weights", "eval_only"])
+def test_real_poc_calibration_errors_fail_closed_through_cli(ctx, tmp_path, invalid):
+    if invalid == "nan_weights":
+        ctx.config["params"]["scoring"] = {"weights": {"blur": float("nan")}}
+    else:
+        images = pd.read_csv(ctx.input_dir / "images.csv")
+        images[images.split.eq("eval")].to_csv(ctx.input_dir / "images.csv", index=False)
+        files = ["images.csv"] + images.path.tolist()
+        write_manifest(build_manifest(ctx.input_dir, files, "synthetic:test", "CC0"), ctx.input_dir / "manifest.csv")
+    config = tmp_path / "lab.yaml"
+    config.write_text(yaml.safe_dump(ctx.config, allow_unicode=True), encoding="utf-8")
+    assert main(["--config", str(config), "--track", "t02", "--input", str(ctx.input_dir),
+                 "--output", str(ctx.output_dir), "--offline"]) == 2
+    assert decision(ctx)["status"] == "HOLD"
+    assert decision(ctx)["reason_code"] == "RUN_FAILED"
+    assert not ctx.out("ranked_review.csv").exists()

@@ -34,7 +34,7 @@ import numpy as np
 import pandas as pd
 
 from ..common.context import RunContext
-from .features import extract_features
+from .features import FEATURE_COLUMNS, extract_features
 
 DEFECT_TYPES = ("blur", "glare", "dark", "compression")
 
@@ -101,15 +101,52 @@ def _ramp(values, floor: float, scale: float) -> np.ndarray:
 
 
 def _resolve_params(ctx: RunContext) -> tuple[dict, str]:
-    params = dict(DEFAULTS)
+    params = {**DEFAULTS, "weights": dict(DEFAULTS["weights"])}
     dev_split = str(ctx.param("dev_split", "dev"))
-    overrides = ctx.param("scoring", None) or {}
+    if dev_split != "dev":
+        raise ValueError("T02 calibration must use dev_split=dev; eval cannot be used for fitting")
+    overrides = ctx.param("scoring", None)
+    if overrides is None:
+        overrides = {}
+    if not isinstance(overrides, dict):
+        raise ValueError("params.scoring must be a mapping")
+    unknown = set(overrides) - set(DEFAULTS)
+    if unknown:
+        raise ValueError(f"Unknown scoring parameters: {sorted(unknown)}")
     for key, value in overrides.items():
-        if key == "weights" and isinstance(value, dict):
+        if key == "weights":
+            if not isinstance(value, dict) or set(value) - set(DEFECT_TYPES):
+                raise ValueError("scoring.weights must map known defect types to finite non-negative numbers")
             params["weights"] = {**params["weights"], **value}
-        elif key in params:
+        else:
             params[key] = value
+
+    group_size = params["min_group_size"]
+    if isinstance(group_size, bool) or not isinstance(group_size, int) or group_size < 1:
+        raise ValueError("scoring.min_group_size must be a positive integer")
+    for key, value in params.items():
+        if key in {"weights", "min_group_size"}:
+            continue
+        params[key] = _finite_nonnegative(value, f"scoring.{key}")
+        if key.endswith("_scale") and params[key] == 0:
+            raise ValueError(f"scoring.{key} must be positive")
+    params["weights"] = {name: _finite_nonnegative(value, f"scoring.weights.{name}")
+                         for name, value in params["weights"].items()}
+    if not 0 <= params["camera_ceiling_quantile"] <= 1:
+        raise ValueError("scoring.camera_ceiling_quantile must be in [0, 1]")
+    if params["keep_max"] >= params["review_max"]:
+        raise ValueError("scoring.keep_max must be less than scoring.review_max")
     return params, dev_split
+
+
+def _finite_nonnegative(value, name: str) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise ValueError(f"{name} must be a finite non-negative number") from exc
+    if isinstance(value, (bool, np.bool_)) or not np.isfinite(number) or number < 0:
+        raise ValueError(f"{name} must be a finite non-negative number")
+    return number
 
 
 def _session_references(features: pd.DataFrame, dev: pd.DataFrame, params: dict,
@@ -175,15 +212,20 @@ def score_images(ctx: RunContext, data: dict) -> pd.DataFrame:
         raise ValueError("T02 scoring requires data['images'] with at least one row")
 
     params, dev_split = _resolve_params(ctx)
+    if not images["split"].eq(dev_split).any():
+        raise ValueError("T02 scoring requires dev images for calibration; refusing to fit on eval-only input")
     started = time.perf_counter()
     features = extract_features(ctx, images)
+    numeric = features[FEATURE_COLUMNS].to_numpy(dtype=float)
+    if not np.isfinite(numeric).all() or (numeric < 0).any():
+        raise ValueError("T02 scoring requires finite non-negative image features")
     features["log_tile_max"] = np.log1p(features["lap_tile_max"])
     features["log_p95"] = np.log1p(features["bright_p95"])
     features["log_sat"] = np.log1p(features["sat_frac"])
 
     dev = features[features["split"] == dev_split]
     if dev.empty:
-        dev = features
+        raise ValueError("T02 feature table has no dev rows; calibration cannot fall back to eval")
     global_ceiling = float(dev["log_tile_max"].quantile(float(params["camera_ceiling_quantile"])))
     camera_ceiling = dev.groupby("camera_id")["log_tile_max"].quantile(float(params["camera_ceiling_quantile"]))
     camera_ref = features["camera_id"].map(camera_ceiling).astype(float).fillna(global_ceiling)
@@ -221,10 +263,12 @@ def score_images(ctx: RunContext, data: dict) -> pd.DataFrame:
 
     signals = {"blur": blur_s, "dark": dark_s, "glare": glare_s, "compression": compression_s}
     weights = params["weights"]
-    score = sum(float(weights[name]) * signals[name] for name in DEFECT_TYPES)
-    strong = sum((signals[name] >= params["multi_signal_floor"]).astype(int) for name in DEFECT_TYPES)
-    score = score + params["multi_signal_bonus"] * np.maximum(strong - 1, 0)
-    score = np.nan_to_num(score, nan=0.0, posinf=0.0, neginf=0.0)
+    with np.errstate(over="ignore", invalid="ignore"):
+        score = sum(float(weights[name]) * signals[name] for name in DEFECT_TYPES)
+        strong = sum((signals[name] >= params["multi_signal_floor"]).astype(int) for name in DEFECT_TYPES)
+        score = score + params["multi_signal_bonus"] * np.maximum(strong - 1, 0)
+    if not np.isfinite(score).all():
+        raise ValueError("T02 scoring produced non-finite scores; refusing to replace them with KEEP")
     score = np.clip(score, 0.0, None)
 
     evidence = {

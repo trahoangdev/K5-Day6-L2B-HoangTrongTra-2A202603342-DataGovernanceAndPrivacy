@@ -37,9 +37,9 @@ không coi phân công hay commit thiết lập là bằng chứng đã hoàn th
 | Hàm | Đầu vào/đầu ra | Trạng thái |
 |---|---|---|
 | `data.load_inputs(ctx)` | `{manifest, images}`; metadata `image_id,path,camera_id,light,split` | Có loader ban đầu: verify manifest, schema, ID và split |
-| `features.extract_features(ctx, images)` | DataFrame feature theo `image_id` | TODO — Nhật Hạ |
-| `scoring.score_images(ctx, data)` | DataFrame scored | TODO — Nhật Hạ; runner exit 3 |
-| `baseline.score_baseline(ctx, data)` | Cùng schema scored với PoC | TODO — Văn Dương; runner exit 3 |
+| `features.extract_features(ctx, images)` | DataFrame feature theo `image_id` | Đã tích hợp — Nhật Hạ |
+| `scoring.score_images(ctx, data)` | DataFrame scored | Đã tích hợp; calibration chỉ dev, kiểm tham số/feature/score hữu hạn |
+| `baseline.score_baseline(ctx, data)` | Cùng schema scored với PoC | Đã tích hợp — Văn Dương; ngưỡng Laplacian trong config T02 |
 | `human_review.apply_human_review(ctx, scored, queue)` | DataFrame sau review | Bridge đã dùng policy: xử lý approve/reject/edit/escalate/skip, giữ score và audit |
 | `policy.decide(ctx, final)` | `Decision` | Đã có HOLD > REWORK > GO với reason/owner/evidence |
 
@@ -84,12 +84,17 @@ Smoke hạ tầng (không phải baseline Laplacian):
 .\.venv\Scripts\python.exe -m src.main --track t02 --pipeline src.examples.random_baseline --output out/smoke --offline --seed 42
 ```
 
-Lệnh của nhóm (hiện chủ động exit 3 cho đến khi module thuật toán được triển khai):
+Lệnh của nhóm (đã chạy thành công trên 96 ảnh, B=20; chưa review thì HOLD):
 
 ```powershell
 .\.venv\Scripts\python.exe -m src.main --track t02 --pipeline src.team06.baseline --output out/baseline --run-name baseline --offline --seed 42
 .\.venv\Scripts\python.exe -m src.main --track t02 --output out/poc --run-name poc --offline --seed 42
 ```
+
+`make baseline TRACK=t02` cũng chọn baseline Laplacian; random vẫn là ví dụ smoke riêng.
+PoC yêu cầu có split dev để hiệu chỉnh; input chỉ eval hoặc `dev_split: eval` bị từ chối.
+NaN/Inf, scale không dương, trọng số âm và cấu hình action không hợp lệ đều báo lỗi thay vì đổi thành KEEP.
+`params.scoring` có thể override các tham số đã khai báo trong scorer, không chấp nhận tên bị gõ sai.
 
 Khi có overlay giảng viên mới chạy evaluate:
 
@@ -142,7 +147,7 @@ Thông tin author/email thực tế và commit thực chất bổ sung vào `rep
   camera khác quang học; không tune trên eval.
 - **Phi Hùng:** test success + failure/edge; schema/seed/offline; so sánh công bằng và hai failure cases.
   Test exit 3 đã tách sang stub riêng; Lead có test CLI/integration bằng scorer giả lập.
-  Bổ sung test thuật toán thật khi Hạ/Dương hoàn thiện scorer.
+  Có test hồi quy scorer và merge nhãn; tiếp tục đánh giá chất lượng trên protocol nhãn đã chốt.
 - **Tuấn Minh:** contact sheet offline; reviewer CSV có tên; áp sửa đổi, validate ID, log before/after;
   giữ raw predictions; escalate dẫn tới chờ duyệt; slide 3–5 trang và minh họa review.
 - **Trà:** tích hợp một lệnh; policy có reason/owner/evidence; kiểm tra clone sạch; tổng hợp báo cáo

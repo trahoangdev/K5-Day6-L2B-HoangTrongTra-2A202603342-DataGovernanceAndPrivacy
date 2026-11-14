@@ -60,7 +60,32 @@ def load(path: Path, who: str) -> pd.DataFrame:
     return df.set_index("image_id").add_suffix(f"_{who}")
 
 
-def main() -> int:
+def reconcile_labels(m: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Only complete agreement on every compared field is an agreed label.
+
+    Severity is optional for legacy files, but must exist on both sides when
+    either provides it. Blank fields never count as resolved agreement.
+    """
+    fields = ["defect_type", "is_defect"]
+    if {"severity_A", "severity_B"} & set(m.columns):
+        if not {"severity_A", "severity_B"} <= set(m.columns):
+            raise ValueError("severity must be supplied in both labelling files")
+        fields.insert(1, "severity")
+    merged = pd.DataFrame(index=m.index)
+    agreed = pd.Series(True, index=m.index, dtype=bool)
+    for field in fields:
+        left = m[f"{field}_A"].fillna("").astype(str).str.strip()
+        right = m[f"{field}_B"].fillna("").astype(str).str.strip()
+        same = left.eq(right) & left.ne("") & right.ne("")
+        merged[field] = left.where(same, "")
+        agreed &= same
+    merged["status"] = agreed.map({True: "agreed", False: "NEEDS_ADJUDICATION"})
+    merged["note"] = ""
+    columns = [f"{field}_{side}" for field in fields for side in ("A", "B")]
+    return merged, m.loc[~agreed, columns]
+
+
+def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--a", default="reports/internal_labels_t02_A.csv")
     ap.add_argument("--b", default="reports/internal_labels_t02_B.csv")
@@ -68,7 +93,7 @@ def main() -> int:
     ap.add_argument("--disagree", default="reports/internal_labels_t02_disagreements.csv")
     ap.add_argument("--retest", action="store_true",
                     help="ép chế độ test-retest (mặc định tự nhận từ cột annotator)")
-    args = ap.parse_args()
+    args = ap.parse_args(argv)
     root = Path(__file__).resolve().parents[1]
 
     A, B = load(root / args.a, "A"), load(root / args.b, "B")
@@ -83,6 +108,8 @@ def main() -> int:
         print(f"CẢNH BÁO: chỉ A có {len(only_a)} ảnh, chỉ B có {len(only_b)} ảnh — so trên phần chung")
     m = A.join(B, how="inner")
     n = len(m)
+    if not n:
+        raise SystemExit("Không có image_id chung để đối soát nhãn")
 
     k = cohen_kappa(m.is_defect_A, m.is_defect_B)
     agree_type = float((m.defect_type_A == m.defect_type_B).mean())
@@ -97,7 +124,8 @@ def main() -> int:
         fails.append(f"kappa {k:.3f} < {KAPPA_MIN}")
     if agree_type < AGREE_MIN:
         fails.append(f"đồng thuận defect_type {agree_type:.3f} < {AGREE_MIN}")
-    print("  -> ĐẠT ngưỡng protocol" if not fails else "  -> CHƯA ĐẠT: " + "; ".join(fails))
+    print("  -> ĐẠT ngưỡng nhất quán; vẫn cần đối soát mọi trường bên dưới"
+          if not fails else "  -> CHƯA ĐẠT: " + "; ".join(fails))
     if retest:
         print("  LƯU Ý: đây là độ nhất quán của một người, KHÔNG phải kappa giữa hai người.")
         print("         Báo cáo phải ghi rõ 'một người gán, test-retest trên N=%d'." % n)
@@ -105,24 +133,14 @@ def main() -> int:
     print("\nMa trận chéo defect_type (hàng = A, cột = B):")
     print(pd.crosstab(m.defect_type_A, m.defect_type_B).to_string())
 
-    dis = m[(m.defect_type_A != m.defect_type_B) | (m.is_defect_A != m.is_defect_B)]
-    cols = [c for c in ["defect_type_A", "severity_A", "defect_type_B", "severity_B"] if c in dis.columns]
-    dis[cols].to_csv(root / args.disagree, lineterminator="\n")
-    print(f"\n{len(dis)} ảnh lệch nhau -> {args.disagree} (hai người xem lại cùng nhau, chốt một nhãn)")
+    merged, dis = reconcile_labels(m)
+    dis.to_csv(root / args.disagree, lineterminator="\n")
+    print(f"\n{len(dis)} ảnh lệch nhau -> {args.disagree} (cần xem lại và chốt nhãn)")
 
-    merged = pd.DataFrame(index=m.index)
-    same = m.defect_type_A == m.defect_type_B
-    merged["defect_type"] = m.defect_type_A.where(same, "")
-    if "severity_A" in m.columns:
-        sev_same = same & (m.severity_A == m.severity_B)
-        merged["severity"] = m.severity_A.where(sev_same, "")
-    merged["is_defect"] = m.is_defect_A.where(m.is_defect_A == m.is_defect_B, "")
-    merged["status"] = ["agreed" if s else "NEEDS_ADJUDICATION" for s in same]
-    merged["note"] = ""
     merged.to_csv(root / args.out, lineterminator="\n")
-    print(f"{int(same.sum())}/{n} ảnh thống nhất -> {args.out}")
+    print(f"{int(merged.status.eq('agreed').sum())}/{n} ảnh thống nhất mọi trường -> {args.out}")
     print("Điền nốt các dòng NEEDS_ADJUDICATION rồi lưu thành reports/internal_labels_t02_final.csv")
-    return 1 if fails else 0
+    return 1 if fails or len(dis) else 0
 
 
 if __name__ == "__main__":

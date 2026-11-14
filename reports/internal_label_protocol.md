@@ -147,13 +147,23 @@ Hệ quả cho nhóm khi đọc kết quả:
 | Nhất quán `is_defect` | 0,900 | — | — |
 | **Cohen's κ test-retest trên `is_defect`** | **0,800** | 0,70 | ✓ |
 | Nhất quán `defect_type` | 0,850 | 0,70 | ✓ |
-| Ảnh phải đối soát | 3 / 20 | — | — |
+| Ảnh phải đối soát trên mọi trường | 4 / 20 | — | — |
 
 Phân bố nhãn cuối: `none` 22 · `blur` 15 · `compression` 9 · `dark` 6 · `glare` 4.
 Tỷ lệ lỗi trên `dev`: 34/56 = 60,7%.
 
 File cuối: `reports/internal_labels_t02_final.csv`, có cột `source` ghi mỗi ảnh
 đến từ đâu (`pass1_only` 36 · `pass1+retest_agreed` 17 · `adjudicated` 3).
+
+**Cập nhật khi tích hợp:** các số `source` trên mô tả file nhãn cuối do thành viên đã chốt trước đây.
+Công cụ sửa mới so cả `defect_type`, `is_defect` và `severity`, phát hiện thêm `img_18_3`:
+lượt 1 severity 1, lượt 2 severity 2. Bảng generated hiện có 16/20 dòng đồng thuận mọi trường,
+4 dòng NEEDS_ADJUDICATION. File nhãn cuối và giá trị severity do thành viên nhập được giữ nguyên;
+Hưng cần xác nhận severity và cập nhật bằng chứng nguồn cho dòng này trước khi dùng nó như đồng thuận.
+Đây là bất đồng severity; nhãn binary ở dòng này vẫn là 1 ở cả hai lượt.
+
+Script ghi cả hai giá trị của mọi trường vào bảng đối soát, để trống trường đang bất đồng trong merged,
+và trả exit 1 nếu còn bất đồng hoặc chưa đạt ngưỡng nhất quán. Exit 0 đòi hỏi đã đồng thuận đầy đủ.
 
 ### Lượt 2 phải làm lại — và vì sao chi tiết này đáng ghi
 

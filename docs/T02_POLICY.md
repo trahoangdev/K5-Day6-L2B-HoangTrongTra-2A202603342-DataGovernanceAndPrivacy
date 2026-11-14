@@ -128,4 +128,7 @@ Dương/Hạ chỉ cần hoàn thiện scorer theo giao diện chung; không c�
 Test dùng input/score/reviewer **synthetic riêng trong thư mục tạm**, không phải lời giải baseline/PoC,
 không tạo metric nộp bài và không đọc GT. Có kiểm CLI qua runner thật, GO/HOLD/REWORK, override,
 stale review, score/metadata invalid, audit, provenance, network/GT guard và output lỗi.
-CLI PoC/baseline thật vẫn exit 3 cho đến khi module của Hạ/Dương hoàn thiện; không thay bằng random.
+Baseline của Dương và PoC của Hạ đã tích hợp; CLI thật chạy offline trên đủ 96 ảnh.
+Test synthetic ở trên dùng để kiểm tra semantics của policy; không thay số liệu chất lượng thật.
+Calibration của PoC yêu cầu dev, không fallback sang eval. Cấu hình/feature/score không hữu hạn
+báo input error (exit 2), integration ghi HOLD/RUN_FAILED thay vì KEEP giả.

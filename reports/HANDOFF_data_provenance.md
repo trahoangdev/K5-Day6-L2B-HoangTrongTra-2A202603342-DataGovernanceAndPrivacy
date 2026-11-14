@@ -89,7 +89,7 @@ thích kết quả**.
 | Schema `images.csv` | đủ cột, không null, `image_id` không trùng |
 | Rò rỉ split | không — 24 cảnh gốc, không cảnh nào ở cả hai split |
 | Phân tầng | lệch, xem mục 1.1 |
-| Nhãn nội bộ | **chưa có ai gán** |
+| Nhãn nội bộ | Đã có 56 ảnh dev lượt 1, 20 ảnh test-retest và file nhãn cuối do thành viên chốt; kiểm tra bảng đối soát mọi trường trước khi dùng |
 
 Chạy lại: `python tools/data_audit.py --track t02 --out reports/data_audit_t02.md`
 
@@ -114,9 +114,18 @@ bị sửa line ending. `-text` nói thẳng: đừng đụng vào bất cứ th
 
 **Nếu bạn clone trước khi có nhánh này và đang bị exit 2:**
 
-```bash
-git rm --cached -r . && git reset --hard
+Giữ nguyên thư mục đang làm để bảo toàn cả thay đổi chưa commit và file mới.
+Clone nhánh tích hợp vào **một thư mục mới chưa tồn tại**, rồi kiểm manifest:
+
+```powershell
+git clone --branch feat/team06-t02-integration https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy.git ../team06-clean
+Set-Location ../team06-clean
+# Tạo môi trường theo docs/TEAM06.md, sau đó:
+.\.venv\Scripts\python.exe -m tools.verify_manifests
 ```
+
+Chuyển các commit hoặc thay đổi đã kiểm tra từ thư mục cũ sang bản clone mới.
+Cách này giữ lại nguyên vẹn công việc đang làm trong thư mục cũ.
 
 ---
 
