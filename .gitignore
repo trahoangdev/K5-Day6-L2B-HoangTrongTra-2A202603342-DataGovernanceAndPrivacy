@@ -25,6 +25,8 @@ venv/
 __pycache__/
 *.pyc
 .pytest_cache/
+.playwright-cli/
+.npm-cache/
 *.egg-info/
 .ipynb_checkpoints/
 
@@ -32,6 +34,3 @@ __pycache__/
 .DS_Store
 .idea/
 .vscode/
-
-# Generated labelling sheets (regenerate: python tools/make_label_sheet.py)
-reports/internal_label_sheet_*.html

@@ -1,16 +1,10 @@
 # Day 06 · Data Lab · Field-to-Release PoC (AI20K · Data Track)
 
-**Team 6 (G06) · T02 Raw QC Triage** — Lead: **Hoàng Trọng Trà – 2A202603342**.
-Phân công 6 thành viên, giao diện module, nhánh Git và lệnh PowerShell: [docs/TEAM06.md](docs/TEAM06.md).
-Tích hợp và [policy T02 của Lead](docs/T02_POLICY.md) đã có review/audit và gate GO/HOLD/REWORK.
-Data, baseline Laplacian và PoC đa feature đã được tích hợp; lệnh chạy thật tạo prediction, queue và decision.
-Chưa review thì decision HOLD là bình thường; metric chính thức vẫn cần GT giảng viên.
-
 Starter repo cho bài lab **Data Pipeline, Privacy & Production PoC**: 14 challenge (T01–T14), một contract chung.
 Repo cung cấp **dữ liệu offline + hạ tầng dùng chung + metric chuẩn + template báo cáo** để nhóm tập trung vào phần quan trọng:
 vấn đề, baseline, thuật toán, đánh giá trung thực, human-in-the-loop và quyết định GO/HOLD/REWORK.
 
-> Khung lab gốc cung cấp hạ tầng. Bản Team 6 bổ sung lời giải T02 trong `src/team06/`, nối qua `src/pipeline.py`.
+> Repo **không** chứa lời giải. `src/pipeline.py` là file nhóm sở hữu; mọi thuật toán (kể cả baseline) do nhóm tự cài.
 > Tài liệu học tập, không thay tư vấn pháp lý.
 
 ## 1. Quickstart (≤ 5 phút, chạy offline)
