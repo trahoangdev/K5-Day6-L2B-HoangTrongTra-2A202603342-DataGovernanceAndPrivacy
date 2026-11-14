@@ -34,7 +34,7 @@ def thumb_uri(path: Path) -> str:
     return "data:image/jpeg;base64," + base64.b64encode(path.read_bytes()).decode("ascii")
 
 
-def build_html(df: pd.DataFrame, track_dir: Path, out: Path, annotator: str, track: str) -> None:
+def build_html(df: pd.DataFrame, track_dir: Path, out: Path, tag: str, annotator: str, track: str) -> None:
     opt = lambda vals: "".join(f'<option value="{v}">{v or "—"}</option>' for v in vals)
     rows = []
     for r in df.itertuples():
@@ -48,7 +48,7 @@ def build_html(df: pd.DataFrame, track_dir: Path, out: Path, annotator: str, tra
   <input class="note" placeholder="ghi chú (tuỳ chọn)">
 </div>""")
     out.write_text(f"""<!doctype html><meta charset="utf-8">
-<title>Nhãn nội bộ {track} — {html.escape(annotator)}</title>
+<title>Nhãn nội bộ {track} — {html.escape(tag)}</title>
 <style>
  body{{font:14px system-ui,sans-serif;margin:16px;background:#111;color:#eee}}
  h1{{font-size:18px}} .bar{{position:sticky;top:0;background:#111;padding:8px 0;border-bottom:1px solid #333;z-index:9}}
@@ -60,7 +60,7 @@ def build_html(df: pd.DataFrame, track_dir: Path, out: Path, annotator: str, tra
  button{{padding:8px 14px;font-size:14px;cursor:pointer}} .done{{outline:2px solid #2d7}}
 </style>
 <div class="bar">
- <h1>Nhãn nội bộ · {track} · người gán: <b>{html.escape(annotator)}</b></h1>
+ <h1>Nhãn nội bộ · {track} · phiếu <b>{html.escape(tag)}</b> · người gán: <b>{html.escape(annotator)}</b></h1>
  <span id="count"></span> &nbsp; <button onclick="exportCsv()">Export CSV</button>
  <p style="color:#999;margin:6px 0 0">Quy ước: <b>none</b> = ảnh dùng được · <b>blur/glare/dark/compression</b> = lỗi.
  Mức độ 0 nhẹ, 1 vừa, 2 nặng. Để trống = chưa gán.</p>
@@ -84,7 +84,7 @@ function exportCsv(){{
   }});
   const b=new Blob([lines.join('\\n')],{{type:'text/csv'}});
   const a=document.createElement('a'); a.href=URL.createObjectURL(b);
-  a.download='internal_labels_{annotator}.csv'; a.click();
+  a.download='internal_labels_{tag}.csv'; a.click();
 }}
 </script>
 """, encoding="utf-8", newline="\n")
@@ -135,7 +135,7 @@ def main() -> int:
     tmpl.to_csv(csv_path, index=False, lineterminator="\n")
 
     html_path = root / "reports" / f"internal_label_sheet_{a.track}_{tag}.html"
-    build_html(df, track_dir, html_path, tag, a.track)
+    build_html(df, track_dir, html_path, tag, a.annotator, a.track)
     print(f"{len(df)} ảnh (split={a.split}{', mẫu ngẫu nhiên' if a.sample else ''})")
     print(f"  template : {csv_path.relative_to(root)}")
     print(f"  sheet    : {html_path.relative_to(root)}  ({html_path.stat().st_size/1024:.0f} KB)")
