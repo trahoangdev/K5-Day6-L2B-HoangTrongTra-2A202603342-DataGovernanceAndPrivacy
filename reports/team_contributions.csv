@@ -4,4 +4,4 @@ Nguyễn Quốc Hưng - 2A202603324,Soraxolo,sora.12082004@gmail.com,Data & Prov
 Phạm Văn Dương - 2A202603332,,,Baseline & Research,src/team06/baseline.py; reports/,,Phân công đã chốt; Git author/email và commit SHA cần xác nhận,
 Nguyễn Nhật Hạ - 2A202603325,,,Core Algorithm / PoC,src/team06/features.py; src/team06/scoring.py,,Phân công đã chốt; Git author/email và commit SHA cần xác nhận,
 Lê Trần Phi Hùng - 2A202603353,,,QA & Evaluation,tests/test_team06.py; tests/; reports/metrics_*.json,,Phân công đã chốt; Git author/email và commit SHA cần xác nhận,
-Nguyễn Tuấn Minh - 2A202603349,,,Human Review & Demo,src/team06/human_review.py; demo/; reports/,,Phân công đã chốt; Git author/email và commit SHA cần xác nhận,
+Nguyễn Tuấn Minh - 2A202603349,minhnguyen03,minhdzvkl203@gmail.com,Human Review & Demo,src/team06/human_review.py; demo/; tests/test_human_review.py,,Review offline 20/20 trên queue PoC; edit KEEP img_18_2; escalate img_12_3 vẫn HOLD; raw score không đổi,

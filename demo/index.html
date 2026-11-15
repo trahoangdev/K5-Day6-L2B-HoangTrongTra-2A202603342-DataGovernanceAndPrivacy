@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Team 6 · Human Review Demo</title>
+<style>
+  :root { color-scheme: light; }
+  body { margin: 0; font-family: "Segoe UI", system-ui, sans-serif; background: #10140f; color: #f4f1e8; }
+  section { display: none; min-height: 100vh; box-sizing: border-box; padding: 48px 64px 88px; }
+  section.active { display: block; }
+  h1 { font-size: 42px; margin: 0 0 8px; letter-spacing: -0.03em; }
+  h2 { font-size: 28px; margin: 0 0 16px; }
+  p, li { font-size: 20px; line-height: 1.45; }
+  .kicker { color: #d7e26a; font-weight: 650; letter-spacing: 0.04em; text-transform: uppercase; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 20px; }
+  figure { margin: 0; background: #1b2218; border-radius: 12px; overflow: hidden; }
+  img { width: 100%; height: 180px; object-fit: cover; display: block; background: #000; }
+  figcaption { padding: 10px 12px 14px; font-size: 15px; }
+  code, .pill { font-family: ui-monospace, Consolas, monospace; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: #2a3324; color: #d7e26a; }
+  table { border-collapse: collapse; width: 100%; font-size: 18px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #2c3628; }
+  nav { position: fixed; bottom: 16px; right: 24px; display: flex; gap: 8px; align-items: center; }
+  button { background: #d7e26a; color: #17200f; border: 0; border-radius: 8px; padding: 8px 14px; font-weight: 650; }
+  #count { color: #c8c2b4; }
+</style>
+</head>
+<body>
+<section class="active">
+  <p class="kicker">Team 6 · T02 · Nguyễn Tuấn Minh · 2A202603349</p>
+  <h1>Human review, offline.</h1>
+  <p>PoC chạy một lệnh, seed 42, không mạng. Chưa có reviewer thì gate là <span class="pill">HOLD / REVIEW_PENDING</span>.</p>
+  <p><code>python -m src.main --track t02 --output out/poc --run-name poc --offline --seed 42</code></p>
+  <p>Contact sheet tự chứa trong <code>out/poc/contact_sheet.html</code>: ảnh, score, đề xuất, tên reviewer và nút Export CSV. File này không commit.</p>
+</section>
+<section>
+  <p class="kicker">02 · Queue B = 20</p>
+  <h2>Top score đều là RECAPTURE.</h2>
+  <p>96 ảnh, 20 ảnh vào queue. Ngoài queue còn 5 ảnh scorer trả REVIEW và 31 ảnh RECAPTURE tự động. Review người không sửa score.</p>
+  <div class="grid">
+    <figure><img src="../fixtures/t02_raw_qc/images/img_15_3.jpg" alt="img_15_3"><figcaption>01 · img_15_3 · dusk tối · approve RECAPTURE</figcaption></figure>
+    <figure><img src="../fixtures/t02_raw_qc/images/img_21_3.jpg" alt="img_21_3"><figcaption>06 · img_21_3 · JPEG block · approve RECAPTURE</figcaption></figure>
+    <figure><img src="../fixtures/t02_raw_qc/images/img_17_2.jpg" alt="img_17_2"><figcaption>20 · img_17_2 · loá nắng · approve RECAPTURE</figcaption></figure>
+  </div>
+</section>
+<section>
+  <p class="kicker">03 · Ba quyết định đã chốt trên ảnh</p>
+  <h2>Approve, edit, escalate.</h2>
+  <div class="grid">
+    <figure><img src="../fixtures/t02_raw_qc/images/img_09_3.jpg" alt="img_09_3"><figcaption>img_09_3 · approve. Block nén rõ so với bản sạch img_09_0.</figcaption></figure>
+    <figure><img src="../fixtures/t02_raw_qc/images/img_18_2.jpg" alt="img_18_2"><figcaption>img_18_2 · edit KEEP. Đêm vẫn thấy xe, người, đèn. Score giữ 1.728876.</figcaption></figure>
+    <figure><img src="../fixtures/t02_raw_qc/images/img_12_3.jpg" alt="img_12_3"><figcaption>img_12_3 · escalate. Dusk tối nhưng làn và xe còn nhận ra.</figcaption></figure>
+  </div>
+</section>
+<section>
+  <p class="kicker">04 · Áp CSV và audit</p>
+  <h2>Raw prediction không bị ghi đè.</h2>
+  <p><code>python -m demo.apply_review</code> chỉ điền reviewer, quyết định, note. Rank, reason, score và evidence lấy từ queue đang chạy.</p>
+  <table>
+    <tr><th>Ảnh</th><th>Trước</th><th>Sau</th><th>Audit</th></tr>
+    <tr><td>img_18_2</td><td>RECAPTURE</td><td>KEEP</td><td>review:edit · HUMAN_EDITED</td></tr>
+    <tr><td>img_12_3</td><td>RECAPTURE</td><td>REVIEW</td><td>review:escalate · chờ duyệt</td></tr>
+    <tr><td>18 ảnh còn lại</td><td>RECAPTURE</td><td>RECAPTURE</td><td>review:approve</td></tr>
+  </table>
+  <p><code>raw_predictions.csv</code> vẫn ghi RECAPTURE cho img_18_2. Cột score của ranked review trùng raw.</p>
+</section>
+<section>
+  <p class="kicker">05 · Gate sau review</p>
+  <h2>HOLD, đúng policy.</h2>
+  <p>20/20 queue đã có tên reviewer. Kết quả run: <span class="pill">HOLD / REVIEW_PENDING</span> · n_keep 41 · n_recapture 49 · n_pending 6 · n_escalated 1.</p>
+  <ul>
+    <li>Escalate img_12_3 giữ ảnh ở REVIEW, chưa được tính là đã xử lý xong.</li>
+    <li>5 ảnh REVIEW ngoài budget không nằm trên contact sheet, nên reviewer không đóng được.</li>
+    <li>31 RECAPTURE tự động ngoài queue vẫn chặn GO ngay cả khi hết pending. Lúc đó gate sẽ là REWORK.</li>
+  </ul>
+  <p>GO ở đây không có nghĩa đã đạt Defect Recall@B hay yêu cầu pháp lý. Muốn hết HOLD phải xử lý escalation và các REVIEW ngoài B, bằng một protocol mới chứ không phải nới score.</p>
+</section>
+<nav>
+  <span id="count">1 / 5</span>
+  <button type="button" id="prev">Trước</button>
+  <button type="button" id="next">Sau</button>
+</nav>
+<script>
+const slides = [...document.querySelectorAll("section")];
+let index = 0;
+function show(next) {
+  index = (next + slides.length) % slides.length;
+  slides.forEach((slide, i) => slide.classList.toggle("active", i === index));
+  document.getElementById("count").textContent = (index + 1) + " / " + slides.length;
+}
+document.getElementById("prev").onclick = () => show(index - 1);
+document.getElementById("next").onclick = () => show(index + 1);
+document.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowRight") show(index + 1);
+  if (event.key === "ArrowLeft") show(index - 1);
+});
+</script>
+</body>
+</html>
