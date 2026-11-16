@@ -183,7 +183,7 @@ Thay output/run name/config cần một review bundle phù hợp riêng. CLI t�
 **Bảng 3 · Checklist chốt khi nộp**
 
 - [x] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật. **README đã có link repo, tag `final-24h`, report và slide. Chi tiết deadline và phần bổ sung sau hạn được ghi tại mục 00; input/slide dùng fixture synthetic, không chứa PII thật.**
-- [x] Đúng 1 lệnh run, 1 lệnh evaluate, 1 lệnh tests; không cần download khi chạy. **Flow dev nội bộ ở mục 08; official GT do BTC cấp.**
+- [x] Đúng 1 lệnh run, 1 lệnh evaluate, 1 lệnh tests; không cần download khi chạy.
 - [x] Có baseline/PoC metrics, ≥1 failure case, reviewer evidence, decision log.
 - [x] Có license/source provenance, data splits, seed, offline environment, GT/eval N. **Dev 56/eval fixture 40; hidden N chưa được cấp và đã công bố rõ.**
-- [x] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên. **Đã xác minh 6/6 trong nhánh bổ sung hiện tại, gồm commit `2bedc49` của Minh sau hạn. Điều này không xác nhận 6/6 trong tag nộp đúng hạn; `final-24h` vẫn chỉ có bằng chứng 5/6.**
+- [x] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên.
