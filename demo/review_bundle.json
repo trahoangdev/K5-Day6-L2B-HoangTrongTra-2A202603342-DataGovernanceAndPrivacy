@@ -1,0 +1,196 @@
+{
+  "version": "team06-review-bundle-v2",
+  "source_commit": "2bedc49ca836265ec92a7c4876de1a4e37f8d2ae",
+  "source_path": "demo/decisions.csv",
+  "source_blob": "3ba9b7af0313ffedc677f3b3886110603c04ecf6",
+  "source_decisions_sha256": "3a925c06d228f26bf75f2c94f3999c15937dde90b8c373331d351d92e1e3b2d0",
+  "reviewer": "Nguyễn Tuấn Minh - 2A202603349",
+  "recorded_at": "2026-11-16T01:02:33+07:00",
+  "timestamp_source": "Git commit metadata records the decision file; exact human review wall-clock time was not independently captured. Replay preserves this recorded timestamp.",
+  "source_context_reconstructed": {
+    "policy_version": "t02-lead-v1",
+    "config_hash": "5aba3d3fda98",
+    "seed": 42,
+    "input_manifest_sha256": "7faea054fdc348e363d98b406e1f762b01cc158d5b1bc0584e163069dacd4c79",
+    "scored_sha256": "30f6534020716dd8a8998d32abe6442209306d5092689eb572b96e76dff58df2",
+    "queue_ids": [
+      "img_15_3",
+      "img_07_2",
+      "img_12_3",
+      "img_17_3",
+      "img_23_3",
+      "img_21_3",
+      "img_20_2",
+      "img_18_2",
+      "img_10_3",
+      "img_01_2",
+      "img_12_2",
+      "img_06_2",
+      "img_02_3",
+      "img_00_2",
+      "img_03_3",
+      "img_06_3",
+      "img_08_3",
+      "img_03_2",
+      "img_09_3",
+      "img_17_2"
+    ],
+    "fingerprint": "12b71402e81b"
+  },
+  "context": {
+    "policy_version": "t02-lead-v1",
+    "config_hash": "089c7ee2493f",
+    "seed": 42,
+    "input_manifest_sha256": "7faea054fdc348e363d98b406e1f762b01cc158d5b1bc0584e163069dacd4c79",
+    "scored_sha256": "30f6534020716dd8a8998d32abe6442209306d5092689eb572b96e76dff58df2",
+    "queue_ids": [
+      "img_15_3",
+      "img_07_2",
+      "img_12_3",
+      "img_17_3",
+      "img_23_3",
+      "img_21_3",
+      "img_20_2",
+      "img_18_2",
+      "img_10_3",
+      "img_01_2",
+      "img_12_2",
+      "img_06_2",
+      "img_02_3",
+      "img_00_2",
+      "img_03_3",
+      "img_06_3",
+      "img_08_3",
+      "img_03_2",
+      "img_09_3",
+      "img_17_2"
+    ],
+    "fingerprint": "6936a8846e40"
+  },
+  "compatibility_evidence": "Reconstructed source commit and current frozen v1 configuration produced identical normalized raw_predictions.csv and review_queue.csv. Their config hashes differ (config promotion/output/run name), so the v2 bundle explicitly binds this separate out/minh-review run; no arbitrary context is accepted.",
+  "queue_sha256": "1d3b07a0c78e4e8c9fb0c4116836faeeaea46e4d451f16765d9b9159eb3c9455",
+  "decisions": [
+    {
+      "item_id": "img_15_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Dusk gần như tối đen, xe và làn không đủ để dùng. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_07_2",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Ngày nhưng phơi sáng quá thấp, vật thể chỉ còn mảng tối. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_12_3",
+      "reviewer_decision": "escalate",
+      "override_value": "",
+      "review_note": "Dusk tối nhưng xe và làn vẫn nhận ra. Chưa chốt recapture, chuyển người thứ hai."
+    },
+    {
+      "item_id": "img_17_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Ngày bị tối nặng, chi tiết xe mất. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_23_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Ngày gần như silhouette, không đủ chi tiết. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_21_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "JPEG block rõ trên trời, nhà và xe. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_20_2",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Ngày thiếu sáng, xe chỉ còn khối mờ. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_18_2",
+      "reviewer_decision": "edit",
+      "override_value": "KEEP",
+      "review_note": "Ảnh đêm vẫn thấy xe, người, đèn và biển báo; glare blob rất nhỏ. Giữ ảnh, không đổi score."
+    },
+    {
+      "item_id": "img_10_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Ngày tối, đối tượng khó tách khỏi nền. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_01_2",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Đêm quá tối, chỉ còn vài điểm sáng. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_12_2",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Dusk mờ và nén block trên xe. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_06_2",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Đêm bị vỡ pixel nặng. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_02_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Ngày thiếu sáng, xe và người khó dùng. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_00_2",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Block JPEG rõ, mép nhà và xe răng cưa. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_03_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Đêm mờ, đèn xe làm mất chi tiết. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_06_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Đèn pha loá và blur, xe trước bị xoá. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_08_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Dusk tối, xe chỉ còn khối. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_03_2",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Đêm mờ kèm glare đèn. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_09_3",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "So với bản sạch cùng cảnh, block nén làm răng cưa nhà và xe. Đồng ý RECAPTURE."
+    },
+    {
+      "item_id": "img_17_2",
+      "reviewer_decision": "approve",
+      "override_value": "",
+      "review_note": "Loá nắng che gần hết khung hình. Đồng ý RECAPTURE."
+    }
+  ],
+  "scope": "Post-deadline supplemental review, distinct from the original Tra review and final-24h; not official accuracy or a new human review on replay.",
+  "source_reconstruction_command": "python -m src.main --config configs/lab.yaml --output out/review-binding --offline --seed 42"
+}

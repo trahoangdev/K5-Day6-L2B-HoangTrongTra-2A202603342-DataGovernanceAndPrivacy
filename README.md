@@ -1,5 +1,9 @@
 # Day 06 · Data Lab · Field-to-Release PoC (AI20K · Data Track)
 
+> **Bản nộp Team 6 · T02:** [Repo nhóm](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy) · [Tag nộp `final-24h`](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/final-24h) · [Report](reports/group_report.md) · [Slide HTML](demo/index.html).
+>
+> `final-24h` giữ snapshot `99bd9af` đã nộp. Phần review của Minh được tích hợp bổ sung sau hạn trong nhánh hiện tại, không nằm trong tag cũ. Nội dung guideline BTC bên dưới được giữ nguyên.
+
 Starter repo cho bài lab **Data Pipeline, Privacy & Production PoC**: 14 challenge (T01–T14), một contract chung.
 Repo cung cấp **dữ liệu offline + hạ tầng dùng chung + metric chuẩn + template báo cáo** để nhóm tập trung vào phần quan trọng:
 vấn đề, baseline, thuật toán, đánh giá trung thực, human-in-the-loop và quyết định GO/HOLD/REWORK.
