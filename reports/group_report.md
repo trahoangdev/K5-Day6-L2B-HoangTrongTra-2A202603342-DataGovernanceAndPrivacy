@@ -12,11 +12,9 @@
 | Challenge | T02 · Raw QC Triage |
 | Thành viên (5–6) + vai trò | Hoàng Trọng Trà – 2A202603342 (Lead / Integrator); Nguyễn Quốc Hưng – 2A202603324 (Data & Provenance); Phạm Văn Dương – 2A202603332 (Baseline & Research); Nguyễn Nhật Hạ – 2A202603325 (Core Algorithm / PoC); Lê Trần Phi Hùng – 2A202603353 (QA & Evaluation); Nguyễn Tuấn Minh – 2A202603349 (Human Review & Demo) |
 | Git URL | https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy |
-| Tag `demo-180m` (commit) | [demo-180m](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/demo-180m), annotated tag tại `22a7967ae3e3e6f1be400a5cfe29cdd02f1f938c`, tạo 14/11/2026 23:36:16 UTC+7. Giữ nguyên snapshot demo; freeze đúng phút 180. |
-| Tag `final-24h` (commit) | [final-24h](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/final-24h), annotated tag được chốt lại sau `22a7967` để giữ README gốc và đồng bộ bằng chứng đóng góp. Tra commit bằng `git rev-parse final-24h^{commit}`, thời điểm thực tế bằng `git show --no-patch final-24h`; tag demo giữ nguyên ở snapshot trước. |
+| Tag `demo-180m` (commit) | [demo-180m](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/demo-180m), annotated tag tại `22a7967ae3e3e6f1be400a5cfe29cdd02f1f938c`, tạo 14/11/2026 23:36:16 UTC+7. Giữ nguyên snapshot demo; tạo sau mốc 16:00 nên không chứng minh freeze đúng phút 180. |
+| Tag `final-24h` (commit) | [final-24h](https://github.com/trahoangdev/K5-Day6-L2B-HoangTrongTra-2A202603342-DataGovernanceAndPrivacy/tree/final-24h) giữ nguyên tại `99bd9af4d5796c7a0905f189256084e9566fc9ce`, tạo 15/11/2026 00:29:41 UTC+7. Phần tích hợp review của Minh trong nhánh hiện tại là bổ sung sau hạn, chưa nằm trong tag này; không dời tag hoặc ghi lùi timestamp. |
 | Deadline (giờ VN) | **15/11/2026 11:59 (UTC+7)**. Bắt đầu 14/11/2026 13:00; mốc 180 phút là 16:00 cùng ngày. |
-
-README giữ nguyên guideline BTC theo yêu cầu của nhóm. Link repo, tag và deadline đặt tại mục 00 của report này; điều kiện đặt link ngay trong README của checklist BTC được ghi là chưa thực hiện ở Bảng 3. Chốt tag không thay thế bằng chứng commit cá nhân, showcase hoặc điểm hidden eval.
 
 ## 01 · Problem statement
 
@@ -118,6 +116,10 @@ Official/hidden eval do giảng viên cung cấp input/GT và chạy evaluator s
 - Decision policy `t02-lead-v1`, owner Hoàng Trọng Trà – 2A202603342. Sau review: 20 reviewed, 40 KEEP, 51 RECAPTURE, 5 pending; **HOLD / REVIEW_PENDING**.
 - HOLD khi review/skip/escalation chưa xong hoặc thiếu provenance/offline; REWORK khi review xong nhưng còn RECAPTURE. Năm ảnh pending ngoài queue: img_15_0, img_09_0, img_16_3, img_08_2, img_19_2. Muốn xử lý cần protocol bổ sung, không tăng budget để ép GO.
 
+- Bổ sung sau hạn: Minh commit 20 quyết định riêng, trong đó edit KEEP cho img_18_2 và escalate img_12_3. Nguồn được bảo toàn trong commit `2bedc49`; [review_bundle.json](../demo/review_bundle.json) lưu nguyên quyết định, nguồn Git và timestamp ghi nhận của commit. Thời điểm ngồi duyệt thực tế không được ghi độc lập; replay giữ timestamp ghi nhận, không tạo một xác nhận người thật mới.
+- Protocol `team06-review-bundle-v2` ở [review_protocol_v2.json](../configs/review_protocol_v2.json) kiểm tra mã triển khai, bundle, manifest, toàn bộ raw score, queue và fingerprint. Đã tái lập nhánh gốc của Minh và cấu hình hiện tại: raw_predictions/queue khớp nhau; khác biệt config/output/run name được khai báo bằng hai context riêng. Review cũ không được ghép tùy ý sang config/score/queue khác, không ghi đè CSV người duyệt đã có.
+- Phiên bổ sung ở `out/minh-review`: 20 mục có quyết định, nhưng một escalation chưa giải quyết; **41 KEEP, 49 RECAPTURE, 6 pending, HOLD / REVIEW_PENDING**, không thay số 40/51/5 của phiên Trà. Giữ nguyên `protocol_freeze.json`, wrapper `human_review.py`, CSV review, audit và metric gốc. Module v2 tách riêng để replay v1 vẫn chạy nguyên trạng.
+
 ## 08 · Reproduce & tests
 
 ```bash
@@ -131,8 +133,19 @@ pytest -q
 - Windows: tạo .venv/cài requirements bằng Python, kích hoạt `.venv/Scripts/Activate.ps1`, rồi dùng các lệnh Python tương tự. Cài dependency là bước chuẩn bị; pipeline/evaluate chạy offline.
 - Entry point BTC giữ nguyên: `python -m src.main --input fixtures/t02_raw_qc --config configs/lab.yaml --output out/poc --offline --seed 42`. `run.sh` chạy entry point này, evaluate khi có overlay rồi pytest.
 - Kết quả đã ghi nhận: **147 passed, 39 skipped, 0 failed**; skip cần GT instructor. Preflight exit 0; 14/14 fixture manifests PASS.
+- Nhánh tích hợp bổ sung: **181 passed, 39 skipped, 0 failed**, gồm 34 test review bundle (kế thừa 2 test gốc của Minh và bổ sung kiểm tra context/score/manifest, timestamp, idempotence, chống ghi đè). Con số 147 phía trên là lần kiểm của snapshot nộp trước; không sửa metric hoặc audit lịch sử để thay số này.
 - Checkout sạch kiểm tại `02f2253`: default CLI, Baseline/PoC/replay và tests exit 0; đủ 20 review, còn 5 pending; không sinh thêm file reports và audit gốc không đổi. Log kiểm tra giữ trong out/, không commit.
 - Máy/CPU/OS/Python: Intel64 Family 6 Model 154 Stepping 3, GenuineIntel; Windows-11-10.0.26200-SP0; Python 3.12.14. Timing metrics ghi git `24bf3ec`, khác commit kiểm thử; không diễn giải hai record là cùng lần chạy.
+
+Replay bổ sung của Minh dùng một thư mục riêng và đúng lệnh đã được bundle ràng buộc:
+
+```bash
+python -m src.main --config configs/lab.yaml --output out/minh-review --run-name minh_review --offline --seed 42
+python -m demo.apply_review
+python -m src.main --config configs/lab.yaml --output out/minh-review --run-name minh_review --offline --seed 42
+```
+
+Thay output/run name/config cần một review bundle phù hợp riêng. CLI từ chối trước khi ghi nếu không khớp context, score, manifest, queue hoặc mã đã freeze. Các kết quả của phiên này và kiểm tra tái lập nằm trong `out/`, không thêm bản sao vào `reports/`.
 
 ## 09 · Limitations & ethics
 
@@ -140,7 +153,7 @@ pytest -q
 - Điều chưa biết: nhãn dev có bias AI/prelabel, thiếu đánh giá độc lập và hidden eval; night dev chỉ 4 ảnh, cam_A/night không có dev cho chuẩn camera×light. Khi tăng 10× cần đo lại CPU/memory, kích thước contact sheet và công suất reviewer.
 - OOD: 10 ảnh foggy (5 daytime, 4 night, 1 dawn/dusk), đủ score hữu hạn 1.050000–2.200744; tất cả bị đề xuất RECAPTURE, loại dự đoán glare 8/dark 2. Không có QC GT nên không báo accuracy; resize/JPEG 90 ảnh hưởng feature. Đây không phải mẫu đại diện hay bằng chứng đúng hạn +24h.
 - Không tuyên bố đạt GDPR/luật Việt Nam từ checklist. DPO/legal/domain owner cần xác nhận quyền dùng ảnh, tiêu chí ảnh hữu ích và hành động recapture.
-- Kế hoạch: review phần pending bằng protocol riêng, bổ sung human labels độc lập và OOD negatives, chấm hidden eval với giảng viên, đo lại budget/runtime. Tag và hạn nộp ghi ở mục 00; tag demo được tạo bổ sung sau mốc 180 phút, không phải bằng chứng đúng mốc. Chưa ghi nhận showcase thực tế hoặc commit thực chất của thành viên thứ sáu.
+- Kế hoạch: review phần pending bằng protocol riêng, bổ sung human labels độc lập và OOD negatives, chấm hidden eval với giảng viên, đo lại budget/runtime. Tag và hạn nộp ghi ở mục 00; tag demo được tạo sau mốc 180 phút. Hiện đã có commit thực chất của Minh trong phần bổ sung sau hạn, nhưng chưa có bằng chứng đủ 6/6 trong tag nộp đúng hạn hoặc showcase/debate thực tế.
 
 ## 10 · Team contribution
 
@@ -153,9 +166,9 @@ pytest -q
 | Phạm Văn Dương – 2A202603332 | pvd2201 / pvd2201@gmail.com | Baseline & Research; `src/team06/baseline.py` | `684924a` | Chưa ghi nhận |
 | Nguyễn Nhật Hạ – 2A202603325 | Nguyen Ha / hgnguyen47347714@gmail.com | Core Algorithm / PoC; `src/team06/features.py`, `scoring.py` | `e75920f` | Chưa ghi nhận |
 | Lê Trần Phi Hùng – 2A202603353 | LTPhiHung / phihung15032001@gmail.com | QA & Evaluation; `tests/test_team06*.py` | `081fae2`; `bfc33ed` | Chưa ghi nhận |
-| Nguyễn Tuấn Minh – 2A202603349 | minhnguyen03 / minhdzvkl203@gmail.com (thông tin tài khoản được cung cấp; chưa đối chiếu qua commit) | Human Review & Demo (phân công ban đầu); chưa xác minh module đóng góp | Chưa có commit thực chất được xác minh | Chưa ghi nhận |
+| Nguyễn Tuấn Minh – 2A202603349 | minhnguyen03 / minhdzvkl203@gmail.com | Human Review & Demo; helper/CLI ghép review, quyết định 20 mục và test; helper được tích hợp sang `src/team06/review_bundle.py` | `2bedc49ca836265ec92a7c4876de1a4e37f8d2ae`| Chưa ghi nhận |
 
-Vai trò là phân công ban đầu; Lead đã tiếp quản phần chưa hoàn tất. Đã đối chiếu các commit được dẫn với Git author/email cho 5/6 thành viên. Danh tính tài khoản của Minh được ghi theo thông tin cung cấp, chưa có module/commit để xác minh đóng góp; không gán commit thay thành viên. AI hỗ trợ code và soạn hồ sơ; 20 review thật được Trà xác nhận riêng. Chưa có bằng chứng đã showcase của từng người.
+Đã đối chiếu Git author/email và diff thực chất cho 6/6 thành viên trong lịch sử của nhánh tích hợp hiện tại. Commit gốc của Minh được giữ làm tổ tiên Git; Lead xử lý tương thích, binding/protocol và test hồi quy. Bằng chứng của Minh đến sau hạn, không tồn tại trong `final-24h`; snapshot đó vẫn chỉ có bằng chứng 5/6. AI hỗ trợ code và soạn hồ sơ; 20 review thật của Trà được xác nhận riêng. Chưa có bằng chứng đã showcase của từng người.
 
 ## 11 · References
 
@@ -169,8 +182,8 @@ Vai trò là phân công ban đầu; Lead đã tiếp quản phần chưa hoàn 
 
 **Bảng 3 · Checklist chốt khi nộp**
 
-- [ ] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật. **Link repo/tag và deadline nằm tại mục 00 của report; input/slide dùng fixture synthetic, không chứa PII thật.**
+- [x] Link repo và tag cuối cùng trong README; input mẫu không chứa PII thật. **README đã có link repo, tag `final-24h`, report và slide. Chi tiết deadline và phần bổ sung sau hạn được ghi tại mục 00; input/slide dùng fixture synthetic, không chứa PII thật.**
 - [x] Đúng 1 lệnh run, 1 lệnh evaluate, 1 lệnh tests; không cần download khi chạy. **Flow dev nội bộ ở mục 08; official GT do BTC cấp.**
 - [x] Có baseline/PoC metrics, ≥1 failure case, reviewer evidence, decision log.
 - [x] Có license/source provenance, data splits, seed, offline environment, GT/eval N. **Dev 56/eval fixture 40; hidden N chưa được cấp và đã công bố rõ.**
-- [ ] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên. **Đã xác minh 5/6 thành viên; Minh chưa có module/commit thực chất được xác minh. Có tên tài khoản/email chưa đủ đáp ứng điều kiện này.**
+- [x] Mỗi thành viên có ≥1 commit thực chất và được nêu minh bạch trong bảng trên. **Đã xác minh 6/6 trong nhánh bổ sung hiện tại, gồm commit `2bedc49` của Minh sau hạn. Điều này không xác nhận 6/6 trong tag nộp đúng hạn; `final-24h` vẫn chỉ có bằng chứng 5/6.**
